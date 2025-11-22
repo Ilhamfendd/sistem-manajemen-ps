@@ -61,6 +61,23 @@ $route['customers/edit/(:num)'] = 'customers/edit/$1';
 $route['customers/update/(:num)'] = 'customers/update/$1';
 $route['customers/delete/(:num)'] = 'customers/delete/$1';
 
+$route['consoles']               = 'consoles/index';
+$route['consoles/create']        = 'consoles/create';
+$route['consoles/store']         = 'consoles/store';
+$route['consoles/edit/(:num)']   = 'consoles/edit/$1';
+$route['consoles/update/(:num)'] = 'consoles/update/$1';
+$route['consoles/delete/(:num)'] = 'consoles/delete/$1';
+
+$route['rentals'] = 'rentals/index';
+$route['rentals/create'] = 'rentals/create';
+$route['rentals/store'] = 'rentals/store';
+$route['rentals/finish/(:num)'] = 'rentals/finish/$1';
+$route['rentals/delete/(:num)'] = 'rentals/delete/$1';
+
+$route['users'] = 'users/index';
+
+$route['reports'] = 'reports/index';
+
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 

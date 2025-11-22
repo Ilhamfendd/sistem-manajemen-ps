@@ -1,32 +1,40 @@
-<h2>Customers</h2>
-<form method="get" action="<?= site_url('customers') ?>" style="margin-bottom:8px">
-  <input type="text" name="q" placeholder="Search name/phone..." value="<?= html_escape($q) ?>">
-  <button type="submit">Search</button>
-  <a href="<?= site_url('customers') ?>">Reset</a>
-  <a class="button" href="<?= site_url('customers/create') ?>" style="float:right">+ Add</a>
-</form>
+<?php $this->load->view('layouts/header', ['title' => $title]); ?>
 
-<table>
-  <thead>
-    <tr>
-      <th>#</th><th>Name</th><th>Phone</th><th>Note</th><th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php foreach ($items as $i => $it): ?>
-    <tr>
-      <td><?= $i+1 ?></td>
-      <td><?= html_escape($it->full_name) ?></td>
-      <td><?= html_escape($it->phone) ?></td>
-      <td><?= nl2br(html_escape($it->note)) ?></td>
-      <td>
-        <a href="<?= site_url('customers/edit/'.$it->id) ?>">Edit</a> |
-        <a href="<?= site_url('customers/delete/'.$it->id) ?>" onclick="return confirm('Delete this customer?')">Delete</a>
-      </td>
-    </tr>
-    <?php endforeach; ?>
-    <?php if (empty($items)): ?>
-      <tr><td colspan="5">No data</td></tr>
+<div class="card">
+    <h2 style="margin-bottom:10px;">Data Pelanggan</h2>
+
+    <a href="<?= site_url('customers/create') ?>" class="btn btn-primary">+ Tambah Pelanggan</a>
+
+    <?php if ($this->session->flashdata('success')): ?>
+        <div class="flash success"><?= $this->session->flashdata('success') ?></div>
     <?php endif; ?>
-  </tbody>
-</table>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nama Lengkap</th>
+                <th>No. Telepon</th>
+                <th>Catatan</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <?php foreach ($items as $i => $c): ?>
+            <tr>
+                <td><?= $i+1 ?></td>
+                <td><?= $c->full_name ?></td>
+                <td><?= $c->phone ?></td>
+                <td><?= $c->note ?></td>
+                <td>
+                    <a class="btn btn-secondary" href="<?= site_url('customers/edit/'.$c->id) ?>">Edit</a>
+                    <a class="btn btn-danger" href="<?= site_url('customers/delete/'.$c->id) ?>" onclick="return confirm('Hapus pelanggan ini?')">Hapus</a>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+<?php $this->load->view('layouts/footer'); ?>

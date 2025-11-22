@@ -1,78 +1,171 @@
-body {
-	font-family: Arial, sans-serif;
-	background: #f5f6fa;
-	color: #333;
+/* RESET */
+* {
 	margin: 0;
 	padding: 0;
+	box-sizing: border-box;
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.container {
-	max-width: 420px;
-	margin: 60px auto;
-	background: #fff;
-	padding: 32px;
-	border-radius: 10px;
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+/* BODY */
+body {
+	background: #f4f6f9;
+	color: #333;
 }
 
-h2 {
-	text-align: center;
-	margin-bottom: 24px;
-	color: #444;
+/* NAVBAR */
+.navbar {
+	height: 55px;
+	width: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background: #1f6feb;
+	color: white;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 20px;
+	z-index: 999;
 }
 
-label {
-	display: block;
-	margin-top: 12px;
-	margin-bottom: 4px;
+.nav-title {
+	font-size: 20px;
 	font-weight: bold;
 }
 
-input[type="email"],
-input[type="password"] {
-	width: 100%;
-	padding: 10px;
-	border: 1px solid #ccc;
+.nav-right span {
+	margin-right: 15px;
+}
+
+/* SIDEBAR */
+.sidebar {
+	position: fixed;
+	top: 55px;
+	left: 0;
+	width: 230px;
+	height: calc(100vh - 55px);
+	background: white;
+	border-right: 1px solid #ddd;
+	padding-top: 20px;
+}
+
+.sidebar a {
+	display: block;
+	padding: 12px 18px;
+	color: #444;
+	text-decoration: none;
+	font-size: 15px;
+	border-left: 3px solid transparent;
+}
+
+.sidebar a:hover {
+	background: #f0f0f0;
+}
+
+/* ACTIVE MENU */
+.sidebar .active {
+	background: #e7efff;
+	border-left: 3px solid #1f6feb;
+	color: #1f6feb;
+	font-weight: bold;
+}
+
+/* MAIN */
+.main {
+	margin-left: 230px;
+	margin-top: 70px;
+	padding: 25px;
+}
+
+/* CARD */
+.card {
+	background: white;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+	margin-bottom: 25px;
+}
+
+/* BUTTON */
+.btn {
+	padding: 8px 15px;
 	border-radius: 6px;
-	box-sizing: border-box;
+	text-decoration: none;
+	font-size: 14px;
 }
 
-button {
+.btn-primary {
+	background: #1f6feb;
+	color: white;
+}
+.btn-primary:hover {
+	background: #1758c5;
+}
+
+.btn-secondary {
+	background: #777;
+	color: white;
+}
+.btn-secondary:hover {
+	background: #555;
+}
+
+.btn-danger {
+	background: #d33;
+	color: white;
+}
+.btn-danger:hover {
+	background: #b21f1f;
+}
+
+/* TABLE */
+table {
 	width: 100%;
-	margin-top: 18px;
-	padding: 10px;
-	background: #007bff;
-	color: #fff;
-	border: none;
+	border-collapse: collapse;
+	margin-top: 15px;
+}
+
+table th {
+	background: #1f6feb;
+	color: white;
+	padding: 12px;
+}
+
+table td {
+	padding: 12px;
+	background: white;
+	border-bottom: 1px solid #ddd;
+}
+
+table tr:hover td {
+	background: #f9fbff;
+}
+
+/* INPUT + SELECT */
+input,
+select,
+textarea {
+	width: 100%;
+	padding: 9px;
+	margin-top: 5px;
+	margin-bottom: 15px;
+	border: 1px solid #bbb;
 	border-radius: 6px;
-	cursor: pointer;
-	font-size: 16px;
 }
 
-button:hover {
-	background: #0069d9;
-}
-
+/* FLASH */
 .flash {
-	margin-top: 16px;
-	padding: 10px;
+	padding: 12px;
 	border-radius: 6px;
-}
-
-.flash.error {
-	background: #ffe6e6;
-	border: 1px solid #ffb7b7;
-	color: #900;
+	margin: 15px 0;
 }
 
 .flash.success {
-	background: #e6ffed;
-	border: 1px solid #b7f5c9;
-	color: #070;
+	background: #d4f8d4;
+	color: #227722;
 }
 
-.footer {
-	margin-top: 24px;
-	text-align: center;
-	color: #888;
+.flash.error {
+	background: #ffdede;
+	color: #b52424;
 }

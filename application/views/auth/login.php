@@ -1,19 +1,25 @@
-<?php $this->load->view('layouts/header', ['title'=>'Login']); ?>
+<?php $this->load->view('layouts/auth_header', ['title' => 'Login']); ?>
 
-<h2>Login</h2>
+<div class="login-container">
+    <h2>Login</h2>
 
-<?= form_open('login', ['class'=>'form-login']); ?>
-  <label>Email</label>
-  <input type="email" name="email" value="<?= set_value('email') ?>" required>
+    <?php if ($this->session->flashdata('error')): ?>
+        <div class="flash error"><?= $this->session->flashdata('error') ?></div>
+    <?php endif; ?>
 
-  <label>Password</label>
-  <input type="password" name="password" required>
+    <?= form_open('login'); ?>
 
-  <button type="submit">Sign In</button>
-<?= form_close(); ?>
+        <label>Email</label>
+        <input type="email" name="email" required value="<?= set_value('email') ?>">
 
-<?php if (validation_errors()): ?>
-  <div class="flash error"><?= validation_errors() ?></div>
-<?php endif; ?>
+        <label>Password</label>
+        <input type="password" name="password" required>
 
-<?php $this->load->view('layouts/footer'); ?>
+        <button class="btn btn-primary" type="submit" style="width:100%; margin-top:10px;">
+            Sign In
+        </button>
+
+    <?= form_close(); ?>
+</div>
+
+<?php $this->load->view('layouts/auth_footer'); ?>
