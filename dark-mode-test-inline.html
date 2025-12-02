@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Dark Mode Test - Inline</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				background: linear-gradient(135deg, #f4f6f9 0%, #e8ecf1 100%);
+				color: #333;
+				font-family: Arial, sans-serif;
+				padding: 20px;
+				transition: background 0.3s ease, color 0.3s ease;
+				min-height: 100vh;
+			}
+
+			/* DARK MODE - Aggressive override */
+			html.dark-mode,
+			body.dark-mode {
+				background: #1a1a1a !important;
+				background-image: none !important;
+				background-color: #1a1a1a !important;
+				color: #e0e0e0 !important;
+			}
+
+			.container {
+				max-width: 800px;
+				margin: 0 auto;
+				background: white;
+				padding: 30px;
+				border-radius: 8px;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+			}
+
+			body.dark-mode .container {
+				background: #2d2d2d !important;
+				color: #e0e0e0 !important;
+			}
+
+			h1,
+			h2 {
+				margin-bottom: 20px;
+			}
+
+			button {
+				padding: 12px 24px;
+				margin: 10px 5px 10px 0;
+				font-size: 16px;
+				cursor: pointer;
+				border: none;
+				border-radius: 4px;
+				background: #1f6feb;
+				color: white;
+				transition: background 0.2s;
+			}
+
+			button:hover {
+				background: #1558c5;
+			}
+
+			body.dark-mode button {
+				background: #1f6feb;
+			}
+
+			body.dark-mode button:hover {
+				background: #2a7ef7;
+			}
+
+			.status {
+				background: #f0f0f0;
+				padding: 15px;
+				border-radius: 4px;
+				margin: 15px 0;
+				border-left: 4px solid #1f6feb;
+			}
+
+			body.dark-mode .status {
+				background: #333 !important;
+				border-left-color: #1f6feb;
+			}
+
+			.status strong {
+				display: block;
+				margin-bottom: 5px;
+			}
+
+			.value {
+				font-family: monospace;
+				background: #e8e8e8;
+				padding: 5px 10px;
+				border-radius: 3px;
+				display: inline-block;
+				margin-top: 5px;
+			}
+
+			body.dark-mode .value {
+				background: #1a1a1a !important;
+				color: #00ff00;
+			}
+
+			.success {
+				color: #28a745;
+			}
+
+			.error {
+				color: #dc3545;
+			}
+
+			.navbar {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				background: #1f6feb;
+				color: white;
+				padding: 15px 30px;
+				margin: -20px -20px 20px -20px;
+				border-radius: 8px 8px 0 0;
+			}
+
+			body.dark-mode .navbar {
+				background: #1f6feb;
+			}
+
+			.toggle-btn {
+				background: #ffc107;
+				color: #333;
+				font-size: 20px;
+				padding: 8px 16px;
+			}
+
+			body.dark-mode .toggle-btn {
+				background: #ffed4e;
+			}
+
+			.toggle-btn:hover {
+				background: #ffb300;
+			}
+
+			body.dark-mode .toggle-btn:hover {
+				background: #ffe082;
+			}
+
+			.info-grid {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 15px;
+				margin: 20px 0;
+			}
+
+			@media (max-width: 600px) {
+				.info-grid {
+					grid-template-columns: 1fr;
+				}
+			}
+
+			code {
+				background: #f4f4f4;
+				padding: 2px 6px;
+				border-radius: 3px;
+				font-family: monospace;
+			}
+
+			body.dark-mode code {
+				background: #333;
+				color: #00ff00;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="navbar">
+			<h2>🌙 Dark Mode Tester</h2>
+			<button class="toggle-btn" id="toggleBtn" onclick="toggleDarkMode()">
+				<span id="icon">🌙</span>
+			</button>
+		</div>
+
+		<div class="container">
+			<h1>Dark Mode Test Console</h1>
+
+			<div class="info-grid">
+				<div class="status">
+					<strong>Browser localStorage:</strong>
+					<div class="value" id="storageValue">loading...</div>
+				</div>
+
+				<div class="status">
+					<strong>Document Classes:</strong>
+					<div class="value" id="classesValue">loading...</div>
+				</div>
+
+				<div class="status">
+					<strong>Body Dark Mode:</strong>
+					<div class="value" id="bodyDarkMode">loading...</div>
+				</div>
+
+				<div class="status">
+					<strong>HTML Dark Mode:</strong>
+					<div class="value" id="htmlDarkMode">loading...</div>
+				</div>
+			</div>
+
+			<button onclick="checkStatus()">📊 Check Status</button>
+			<button onclick="setDarkMode()">🌙 Set Dark Mode</button>
+			<button onclick="setLightMode()">☀️ Set Light Mode</button>
+			<button onclick="clearStorage()">🗑️ Clear Storage</button>
+			<button onclick="testAddClass()">🧪 Test Add Class</button>
+
+			<hr style="margin: 20px 0; border: 1px solid #ccc" />
+
+			<h2>Debug Log</h2>
+			<div class="status" style="max-height: 300px; overflow-y: auto">
+				<pre
+					id="debugLog"
+					style="margin: 0; white-space: pre-wrap; word-wrap: break-word"
+				></pre>
+			</div>
+		</div>
+
+		<script>
+			// Initialize on page load
+			window.addEventListener("load", function () {
+				applyStoredTheme();
+				checkStatus();
+				log("✓ Page loaded and theme applied");
+			});
+
+			// Log function
+			function log(message) {
+				const timestamp = new Date().toLocaleTimeString();
+				const debugLog = document.getElementById("debugLog");
+				debugLog.textContent += `[${timestamp}] ${message}\n`;
+				debugLog.scrollTop = debugLog.scrollHeight;
+				console.log(`[${timestamp}] ${message}`);
+			}
+
+			// Apply theme from localStorage
+			function applyStoredTheme() {
+				const theme = localStorage.getItem("theme") || "light-mode";
+				log(`Applying stored theme: ${theme}`);
+
+				if (theme === "dark-mode") {
+					document.documentElement.classList.add("dark-mode");
+					document.body.classList.add("dark-mode");
+					document.getElementById("icon").textContent = "☀️";
+					log("✓ Dark mode applied (html and body classes added)");
+				} else {
+					document.documentElement.classList.remove("dark-mode");
+					document.body.classList.remove("dark-mode");
+					document.getElementById("icon").textContent = "🌙";
+					log("✓ Light mode applied (dark-mode classes removed)");
+				}
+				checkStatus();
+			}
+
+			// Toggle dark mode
+			function toggleDarkMode() {
+				log("🔄 Toggle clicked...");
+				const currentTheme = localStorage.getItem("theme") || "light-mode";
+				const newTheme =
+					currentTheme === "dark-mode" ? "light-mode" : "dark-mode";
+
+				log(`Current: ${currentTheme}, Switching to: ${newTheme}`);
+
+				localStorage.setItem("theme", newTheme);
+				log(`✓ Saved to localStorage: ${newTheme}`);
+
+				applyStoredTheme();
+				log("✓ Toggle complete");
+			}
+
+			function setDarkMode() {
+				log("Setting dark mode...");
+				localStorage.setItem("theme", "dark-mode");
+				applyStoredTheme();
+			}
+
+			function setLightMode() {
+				log("Setting light mode...");
+				localStorage.setItem("theme", "light-mode");
+				applyStoredTheme();
+			}
+
+			function clearStorage() {
+				log("Clearing localStorage...");
+				localStorage.removeItem("theme");
+				applyStoredTheme();
+			}
+
+			function testAddClass() {
+				log("🧪 Testing class addition...");
+				document.body.classList.add("dark-mode");
+				log("Added dark-mode class to body");
+				checkStatus();
+			}
+
+			// Check and display status
+			function checkStatus() {
+				const storage = localStorage.getItem("theme") || "not set";
+				const bodyHasDark = document.body.classList.contains("dark-mode");
+				const htmlHasDark =
+					document.documentElement.classList.contains("dark-mode");
+				const bodyClasses = document.body.className;
+
+				document.getElementById("storageValue").textContent = storage;
+				document.getElementById("bodyDarkMode").textContent = bodyHasDark
+					? "✓ YES"
+					: "✗ NO";
+				document.getElementById("htmlDarkMode").textContent = htmlHasDark
+					? "✓ YES"
+					: "✗ NO";
+				document.getElementById(
+					"classesValue"
+				).textContent = `body="${bodyClasses}" | html has dark-mode=${htmlHasDark}`;
+
+				log(
+					`Status: storage=${storage}, body-dark=${bodyHasDark}, html-dark=${htmlHasDark}`
+				);
+			}
+
+			// Monitor changes
+			setInterval(checkStatus, 2000);
+		</script>
+	</body>
+</html>

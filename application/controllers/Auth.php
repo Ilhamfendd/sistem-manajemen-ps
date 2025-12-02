@@ -11,7 +11,7 @@ class Auth extends CI_Controller {
 
   public function login() {
     if ($this->session->userdata('user')) {
-      redirect('dashboard');
+      redirect($this->_get_dashboard_redirect());
     }
 
     if ($this->input->method() === 'post') {
@@ -32,7 +32,7 @@ class Auth extends CI_Controller {
             'email' => $user->email,
             'role' => $user->role
           ]);
-          redirect('dashboard');
+          redirect($this->_get_dashboard_redirect());
         } else {
           $this->session->set_flashdata('error', 'Email atau password salah.');
         }
@@ -40,6 +40,24 @@ class Auth extends CI_Controller {
     }
 
     $this->load->view('auth/login');
+  }
+
+  private function _get_dashboard_redirect() {
+    $user = $this->session->userdata('user');
+    if (!$user) {
+      return 'login';
+    }
+
+    switch ($user['role']) {
+      case 'admin':
+        return 'consoles';
+      case 'kasir':
+        return 'rentals';
+      case 'owner':
+        return 'reports';
+      default:
+        return 'login';
+    }
   }
 
   public function logout() {

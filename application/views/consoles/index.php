@@ -1,48 +1,80 @@
 <?php $this->load->view('layouts/header', ['title' => $title]); ?>
 
-<div class="card">
-    <h2>Unit PlayStation</h2>
-
-    <a href="<?= site_url('consoles/create') ?>" class="btn btn-primary">+ Tambah Unit</a>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-gamepad"></i> <?= $title ?></h2>
+        <a class="btn btn-primary" href="<?= site_url('consoles/create') ?>">
+            <i class="fas fa-plus"></i> Tambah Unit
+        </a>
+    </div>
 
     <?php if ($this->session->flashdata('success')): ?>
-        <div class="flash success"><?= $this->session->flashdata('success') ?></div>
+        <div class="alert alert-success alert-dismissible fade show mb-4">
+            <i class="fas fa-check-circle"></i> <?= $this->session->flashdata('success') ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     <?php endif; ?>
 
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Nama Unit</th>
-                <th>Tipe</th>
-                <th>Status</th>
-                <th>Catatan</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
+    <?php if ($this->session->flashdata('error')): ?>
+        <div class="alert alert-danger alert-dismissible fade show mb-4">
+            <i class="fas fa-exclamation-circle"></i> <?= $this->session->flashdata('error') ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
 
-        <tbody>
-            <?php foreach ($items as $i => $c): ?>
-                <tr>
-                    <td><?= $i+1 ?></td>
-                    <td><?= $c->console_name ?></td>
-                    <td><?= $c->console_type ?></td>
-                    <td>
-                        <?php
-                            if ($c->status == 'available') echo "<span style='color:green;'>Available</span>";
-                            if ($c->status == 'in_use') echo "<span style='color:#d33;'>Dipakai</span>";
-                            if ($c->status == 'maintenance') echo "<span style='color:#c97300;'>Maintenance</span>";
-                        ?>
-                    </td>
-                    <td><?= $c->note ?></td>
-                    <td>
-                        <a class="btn btn-secondary" href="<?= site_url('consoles/edit/'.$c->id) ?>">Edit</a>
-                        <a class="btn btn-danger" href="<?= site_url('consoles/delete/'.$c->id) ?>" onclick="return confirm('Hapus unit ini?')">Hapus</a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <?php if (empty($items)): ?>
+        <div class="text-center py-5">
+            <i class="fas fa-inbox text-muted" style="font-size: 3rem;"></i>
+            <p class="text-muted mt-3">Tidak ada unit PlayStation</p>
+        </div>
+    <?php else: ?>
+        <div class="table-responsive mb-0">
+            <table class="table table-hover table-striped table-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Nama Unit</th>
+                        <th>Tipe</th>
+                        <th>Status</th>
+                        <th>Catatan</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($items as $i => $c): ?>
+                    <tr>
+                        <td><strong><?= $i+1 ?></strong></td>
+                        <td><?= $c->console_name ?></td>
+                        <td><span class="badge bg-info"><?= $c->console_type ?></span></td>
+                        <td>
+                            <?php
+                                if ($c->status == 'available') {
+                                    echo '<span class="badge bg-success"><i class="fas fa-check-circle"></i> Available</span>';
+                                } elseif ($c->status == 'in_use') {
+                                    echo '<span class="badge bg-warning"><i class="fas fa-hourglass-half"></i> Dipakai</span>';
+                                } elseif ($c->status == 'maintenance') {
+                                    echo '<span class="badge bg-danger"><i class="fas fa-wrench"></i> Maintenance</span>';
+                                }
+                            ?>
+                        </td>
+                        <td><?= $c->note ?></td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="<?= site_url('consoles/edit/'.$c->id) ?>" class="btn btn-warning" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="<?= site_url('consoles/delete/'.$c->id) ?>" class="btn btn-danger" 
+                                    onclick="return confirm('Hapus unit #<?= $c->id ?>?')" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
 </div>
 
 <?php $this->load->view('layouts/footer'); ?>

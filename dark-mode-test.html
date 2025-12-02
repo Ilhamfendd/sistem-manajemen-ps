@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Dark Mode Test</title>
+		<style>
+			:root {
+				--bg-light: #f4f6f9;
+				--bg-dark: #1a1a1a;
+				--text-light: #333;
+				--text-dark: #e0e0e0;
+			}
+
+			body {
+				background: var(--bg-light);
+				color: var(--text-light);
+				font-family: Arial, sans-serif;
+				padding: 20px;
+				transition: background 0.3s, color 0.3s;
+			}
+
+			body.dark-mode {
+				background: var(--bg-dark);
+				color: var(--text-dark);
+			}
+
+			.container {
+				max-width: 600px;
+				margin: 0 auto;
+				background: white;
+				padding: 20px;
+				border-radius: 8px;
+			}
+
+			body.dark-mode .container {
+				background: #2d2d2d;
+			}
+
+			button {
+				padding: 10px 20px;
+				margin: 10px 0;
+				font-size: 16px;
+				cursor: pointer;
+			}
+
+			.info {
+				background: #f0f0f0;
+				padding: 10px;
+				border-radius: 4px;
+				margin: 10px 0;
+			}
+
+			body.dark-mode .info {
+				background: #333;
+			}
+
+			.success {
+				color: green;
+			}
+
+			.error {
+				color: red;
+			}
+		</style>
+		<script src="public/js/dark-mode.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Dark Mode Test</h1>
+
+			<button id="toggleBtn" onclick="window.toggleDarkMode()">
+				Toggle Dark Mode
+			</button>
+
+			<div class="info">
+				<p>
+					<strong>Saved Theme:</strong> <span id="savedTheme">checking...</span>
+				</p>
+				<p>
+					<strong>Current Mode:</strong>
+					<span id="currentMode">checking...</span>
+				</p>
+				<p>
+					<strong>localStorage.theme:</strong>
+					<span id="localStorageValue">checking...</span>
+				</p>
+			</div>
+
+			<button onclick="checkStatus()">Check Status</button>
+			<button onclick="clearLocalStorage()">Clear localStorage & Reload</button>
+
+			<div id="log" class="info" style="max-height: 200px; overflow-y: auto">
+				<strong>Console Log:</strong>
+				<pre id="logContent"></pre>
+			</div>
+		</div>
+
+		<script>
+			function checkStatus() {
+				const saved = localStorage.getItem("theme") || "light-mode";
+				const current = document.body.classList.contains("dark-mode")
+					? "dark-mode"
+					: "light-mode";
+
+				document.getElementById("savedTheme").textContent = saved;
+				document.getElementById("currentMode").textContent = current;
+				document.getElementById("localStorageValue").textContent =
+					localStorage.getItem("theme") || "(not set)";
+
+				console.log("Status Check:", { saved, current });
+				addLog("Status: Saved=" + saved + ", Current=" + current);
+			}
+
+			function clearLocalStorage() {
+				localStorage.removeItem("theme");
+				document.documentElement.classList.remove("dark-mode");
+				document.body.classList.remove("dark-mode");
+				addLog("✓ localStorage cleared and dark-mode class removed");
+				setTimeout(() => location.reload(), 500);
+			}
+
+			function addLog(message) {
+				const logContent = document.getElementById("logContent");
+				const timestamp = new Date().toLocaleTimeString();
+				logContent.textContent += `[${timestamp}] ${message}\n`;
+				logContent.scrollTop = logContent.scrollHeight;
+			}
+
+			// Override console.log to capture dark mode init logs
+			const originalLog = console.log;
+			console.log = function (...args) {
+				originalLog.apply(console, args);
+				if (
+					(args[0] && args[0].toString().includes("Dark Mode")) ||
+					args[0].toString().includes("Theme")
+				) {
+					addLog("LOG: " + args.map((a) => JSON.stringify(a)).join(" "));
+				}
+			};
+
+			// Initial check
+			window.addEventListener("load", function () {
+				checkStatus();
+			});
+
+			// Check every 1 second to detect changes
+			setInterval(checkStatus, 1000);
+		</script>
+	</body>
+</html>

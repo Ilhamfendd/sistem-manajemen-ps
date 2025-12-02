@@ -49,10 +49,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['default_controller'] = 'auth/login';
+
+// PUBLIC ROUTES (No Login Required)
+$route[''] = 'home/index';
+$route['index'] = 'home/index';
+$route['home'] = 'home/index';
+$route['pricing'] = 'home/pricing';
+$route['about'] = 'home/about';
+$route['contact'] = 'home/contact';
+$route['faq'] = 'home/faq';
+
+// API ROUTES (Public)
+$route['api/get_available_units'] = 'api/available_units';
+$route['api/total_units'] = 'api/total_units';
+$route['api/in_use_units'] = 'api/in_use_units';
+$route['api/check_availability'] = 'home/check_availability';
+$route['api/check_availability/(:any)'] = 'home/check_availability/$1';
+
+// AUTH ROUTES
+$route['default_controller'] = 'home/index';
 $route['login']   = 'auth/login';
 $route['logout']  = 'auth/logout';
-$route['dashboard'] = 'dashboard/index';
 
 $route['customers'] = 'customers/index';
 $route['customers/create'] = 'customers/create';
@@ -67,16 +84,38 @@ $route['consoles/store']         = 'consoles/store';
 $route['consoles/edit/(:num)']   = 'consoles/edit/$1';
 $route['consoles/update/(:num)'] = 'consoles/update/$1';
 $route['consoles/delete/(:num)'] = 'consoles/delete/$1';
+$route['consoles/price_history/(:num)'] = 'consoles/price_history/$1';
+$route['consoles/report']        = 'consoles/report';
+$route['consoles/bulk_status']   = 'consoles/bulk_status';
 
 $route['rentals'] = 'rentals/index';
 $route['rentals/create'] = 'rentals/create';
 $route['rentals/store'] = 'rentals/store';
+$route['rentals/initial_payment/(:num)'] = 'rentals/initial_payment/$1';
+$route['rentals/process_initial_payment/(:num)'] = 'rentals/process_initial_payment/$1';
 $route['rentals/finish/(:num)'] = 'rentals/finish/$1';
+$route['rentals/payment_adjustment/(:num)'] = 'rentals/payment_adjustment/$1';
+$route['rentals/process_payment_adjustment/(:num)'] = 'rentals/process_payment_adjustment/$1';
+$route['rentals/payment/(:num)'] = 'rentals/payment/$1';
+$route['rentals/process_payment/(:num)'] = 'rentals/process_payment/$1';
+$route['rentals/invoice/(:num)'] = 'rentals/invoice/$1';
 $route['rentals/delete/(:num)'] = 'rentals/delete/$1';
 
 $route['users'] = 'users/index';
+$route['users/create'] = 'users/create';
+$route['users/store'] = 'users/store';
+$route['users/edit/(:num)'] = 'users/edit/$1';
+$route['users/update/(:num)'] = 'users/update/$1';
+$route['users/delete/(:num)'] = 'users/delete/$1';
 
 $route['reports'] = 'reports/index';
+$route['reports/revenue'] = 'reports/revenue';
+$route['reports/console_performance'] = 'reports/console_performance';
+$route['reports/payment_analysis'] = 'reports/payment_analysis';
+$route['reports/customer_analysis'] = 'reports/customer_analysis';
+$route['reports/export_revenue_csv'] = 'reports/export_revenue_csv';
+$route['reports/export_console_csv'] = 'reports/export_console_csv';
+$route['reports/export_customer_csv'] = 'reports/export_customer_csv';
 
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

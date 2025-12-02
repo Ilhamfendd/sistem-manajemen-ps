@@ -6,6 +6,7 @@ class Customers extends MY_Controller {
     public function __construct() {
         parent::__construct();
         $this->require_login();
+        $this->require_kasir();  // KASIR ONLY
         $this->load->model('Customer_model');
         $this->load->library('form_validation');
     }

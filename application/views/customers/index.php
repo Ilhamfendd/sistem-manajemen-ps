@@ -1,40 +1,67 @@
 <?php $this->load->view('layouts/header', ['title' => $title]); ?>
 
-<div class="card">
-    <h2 style="margin-bottom:10px;">Data Pelanggan</h2>
-
-    <a href="<?= site_url('customers/create') ?>" class="btn btn-primary">+ Tambah Pelanggan</a>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-users"></i> <?= $title ?></h2>
+        <a class="btn btn-primary" href="<?= site_url('customers/create') ?>">
+            <i class="fas fa-plus"></i> Tambah Pelanggan
+        </a>
+    </div>
 
     <?php if ($this->session->flashdata('success')): ?>
-        <div class="flash success"><?= $this->session->flashdata('success') ?></div>
+        <div class="alert alert-success alert-dismissible fade show mb-4">
+            <i class="fas fa-check-circle"></i> <?= $this->session->flashdata('success') ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     <?php endif; ?>
 
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Nama Lengkap</th>
-                <th>No. Telepon</th>
-                <th>Catatan</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
+    <?php if ($this->session->flashdata('error')): ?>
+        <div class="alert alert-danger alert-dismissible fade show mb-4">
+            <i class="fas fa-exclamation-circle"></i> <?= $this->session->flashdata('error') ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
 
-        <tbody>
-            <?php foreach ($items as $i => $c): ?>
-            <tr>
-                <td><?= $i+1 ?></td>
-                <td><?= $c->full_name ?></td>
-                <td><?= $c->phone ?></td>
-                <td><?= $c->note ?></td>
-                <td>
-                    <a class="btn btn-secondary" href="<?= site_url('customers/edit/'.$c->id) ?>">Edit</a>
-                    <a class="btn btn-danger" href="<?= site_url('customers/delete/'.$c->id) ?>" onclick="return confirm('Hapus pelanggan ini?')">Hapus</a>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <?php if (empty($items)): ?>
+        <div class="text-center py-5">
+            <i class="fas fa-inbox text-muted" style="font-size: 3rem;"></i>
+            <p class="text-muted mt-3">Tidak ada data pelanggan</p>
+        </div>
+    <?php else: ?>
+        <div class="table-responsive mb-0">
+            <table class="table table-hover table-striped table-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Nama Lengkap</th>
+                        <th>No. Telepon</th>
+                        <th>Catatan</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($items as $i => $c): ?>
+                    <tr>
+                        <td><strong><?= $i+1 ?></strong></td>
+                        <td><?= $c->full_name ?></td>
+                        <td><?= $c->phone ?></td>
+                        <td><?= $c->note ?></td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="<?= site_url('customers/edit/'.$c->id) ?>" class="btn btn-warning" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="<?= site_url('customers/delete/'.$c->id) ?>" class="btn btn-danger" 
+                                    onclick="return confirm('Hapus pelanggan #<?= $c->id ?>?')" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
 </div>
 
 <?php $this->load->view('layouts/footer'); ?>
