@@ -419,10 +419,19 @@ function customerArrived(bookingId) {
 }
 
 // Timer countdown untuk approved bookings
+// First, calibrate client time dengan server time
+const serverTime = new Date('<?= date('Y-m-d H:i:s') ?>').getTime();
+const clientTimeAtLoad = new Date().getTime();
+const timeOffset = serverTime - clientTimeAtLoad;
+
+function getServerTime() {
+    return new Date().getTime() + timeOffset;
+}
+
 function updateApprovedTimers() {
+    const now = getServerTime();
     document.querySelectorAll('.timer').forEach(timerEl => {
         const expiresAt = timerEl.dataset.expires;
-        const now = new Date().getTime();
         const expireTime = new Date(expiresAt).getTime();
         const remaining = expireTime - now;
         

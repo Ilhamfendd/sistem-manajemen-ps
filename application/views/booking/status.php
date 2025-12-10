@@ -108,22 +108,33 @@
 
 <?php if($booking['status'] == 'approved' && $remaining_time !== null): ?>
 <script>
-let remainingSeconds = <?= (int)$remaining_time ?>;
+// Calibrate server time dengan client time
+const serverTime = new Date('<?= date('Y-m-d H:i:s') ?>').getTime();
+const clientTimeAtLoad = new Date().getTime();
+const timeOffset = serverTime - clientTimeAtLoad;
+
+function getServerTime() {
+    return new Date().getTime() + timeOffset;
+}
+
+// Calculate remaining time dari expires_at
+const expiresAt = new Date('<?= $booking["expires_at"] ?>').getTime();
 
 function updateCountdown() {
-    const minutes = Math.floor(remainingSeconds / 60);
-    const seconds = remainingSeconds % 60;
+    const now = getServerTime();
+    const remaining = Math.floor((expiresAt - now) / 1000);
     
-    document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-    document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
     
-    if (remainingSeconds <= 0) {
+    document.getElementById('minutes').textContent = String(Math.max(0, minutes)).padStart(2, '0');
+    document.getElementById('seconds').textContent = String(Math.max(0, seconds)).padStart(2, '0');
+    
+    if (remaining <= 0) {
         document.getElementById('countdown').innerHTML = '<span class="text-danger">⏰ WAKTU HABIS!</span>';
         clearInterval(countdownInterval);
         return;
     }
-    
-    remainingSeconds--;
 }
 
 updateCountdown();
