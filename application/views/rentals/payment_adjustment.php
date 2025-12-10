@@ -99,14 +99,8 @@
             <div class="notification notification-info notification-flash" style="display: flex; margin-top: 1.5rem;">
                 <div class="notification-icon"><i class="fas fa-info-circle"></i></div>
                 <div class="notification-content">
-                    <p class="notification-title" style="margin-bottom: 0.5rem; font-weight: 600;">Kebijakan Penyewaan</p>
-                    <ul class="mb-0" style="margin-left: 1rem; font-size: 0.95rem;">
-                        <li>Durasi aktual dihitung dari waktu mulai hingga waktu selesai</li>
-                        <li>Biaya minimum = Estimasi awal (tidak ada pengembalian untuk durasi lebih pendek)</li>
-                        <li>Biaya tambahan hanya jika durasi actual MELEBIHI estimasi yang dibayar</li>
-                        <li>Contoh: Bayar 2 jam, pakai 1.5 jam → Tetap bayar 2 jam (tidak ada pengembalian)</li>
-                        <li>Contoh: Bayar 2 jam, pakai 2.5 jam → Bayar 2.5 jam (tambah Rp untuk 0.5 jam)</li>
-                    </ul>
+                    <p class="notification-title" style="margin-bottom: 0.5rem; font-weight: 600;">Informasi</p>
+                    <p class="notification-message">Pembayaran dapat diselesaikan atau ditolak pada halaman ini.</p>
                 </div>
             </div>
         </div>
