@@ -94,11 +94,6 @@
 
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-                </div>
-            </div>
 
             <!-- Info Box -->
             <div class="notification notification-info notification-flash" style="display: flex; margin-top: 1.5rem;">
