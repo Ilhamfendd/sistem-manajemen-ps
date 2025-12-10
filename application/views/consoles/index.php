@@ -50,6 +50,8 @@
                             <?php
                                 if ($c->status == 'available') {
                                     echo '<span class="badge bg-success"><i class="fas fa-check-circle"></i> Available</span>';
+                                } elseif ($c->status == 'di_pesan') {
+                                    echo '<span class="badge bg-info"><i class="fas fa-calendar-check"></i> Dipesan</span>';
                                 } elseif ($c->status == 'in_use') {
                                     echo '<span class="badge bg-warning"><i class="fas fa-hourglass-half"></i> Dipakai</span>';
                                 } elseif ($c->status == 'maintenance') {
