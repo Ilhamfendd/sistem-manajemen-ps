@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `consoles` (
   `id` int NOT NULL AUTO_INCREMENT,
   `console_name` varchar(50) NOT NULL,
   `console_type` enum('PS3','PS4','PS5') DEFAULT NULL,
-  `status` enum('available','booking','in_use','maintenance') NOT NULL DEFAULT 'available',
+  `status` enum('available','di_pesan','in_use','maintenance') NOT NULL DEFAULT 'available',
   `price_per_hour` int DEFAULT '5000',
   `note` text,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,

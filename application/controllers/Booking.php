@@ -58,6 +58,22 @@ class Booking extends CI_Controller {
         $phone = $this->input->post('phone');
         $full_name = $this->input->post('full_name');
         
+        // Clean up expired bookings first - restore console status if booking expired
+        $this->db->where('status', 'pending');
+        $this->db->where('expires_at <', date('Y-m-d H:i:s'));
+        $expired_bookings = $this->db->get('bookings')->result_array();
+        
+        foreach ($expired_bookings as $booking) {
+            // Restore console to available
+            $this->db->where('id', $booking['console_id']);
+            $this->db->update('consoles', ['status' => 'available']);
+            
+            // Mark booking as expired
+            $this->db->where('id', $booking['id']);
+            $this->db->update('bookings', ['status' => 'expired']);
+        }
+        
+        // Get only available consoles (exclude di_pesan and maintenance)
         $this->db->where('status', 'available');
         $data['consoles'] = $this->db->get('consoles')->result_array();
         $data['phone'] = $phone;
@@ -161,6 +177,11 @@ class Booking extends CI_Controller {
         
         if ($this->db->insert('bookings', $booking_data)) {
             $booking_id = $this->db->insert_id();
+            
+            // Set console status to 'di_pesan' (booked) to prevent double booking
+            $this->db->where('id', $console_id);
+            $this->db->update('consoles', ['status' => 'di_pesan']);
+            
             echo json_encode([
                 'success' => true,
                 'message' => 'Booking berhasil dibuat! Silakan tunggu persetujuan kasir.',
@@ -213,6 +234,10 @@ class Booking extends CI_Controller {
         
         $this->db->where('id', $booking_id);
         $this->db->update('bookings', ['status' => 'rejected']);
+        
+        // Restore console to 'available' when booking is rejected
+        $this->db->where('id', $booking['console_id']);
+        $this->db->update('consoles', ['status' => 'available']);
         
         echo json_encode(['success' => true, 'message' => 'Booking ditolak']);
     }
