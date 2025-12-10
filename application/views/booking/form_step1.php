@@ -4,11 +4,11 @@
     <div class="row justify-content-center">
         <div class="col-md-5">
             <div style="text-align: center;">
-                <h3 class="mb-4">Cari Nomor HP Anda</h3>
+                <h3 class="mb-4">Pesan Unit PS</h3>
                 
                 <div class="mb-4">
                     <input type="tel" class="form-control form-control-lg" id="phone" 
-                           placeholder="08xxxxxxxxx" autocomplete="off">
+                           placeholder="Masukkan nomor HP" autocomplete="off">
                 </div>
 
                 <button id="searchBtn" class="btn btn-outline-primary btn-lg" style="width: 60px; height: 60px; border-radius: 50%;">
