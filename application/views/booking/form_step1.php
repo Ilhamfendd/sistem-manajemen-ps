@@ -9,9 +9,9 @@
 </head>
 <body style="background-color: #f8f9fa; padding: 40px 20px;">
 
-<div class="container" style="margin-top: 0;
+<div class="container" style="margin-top: 0;">
     <div class="row justify-content-center">
-        <div class="col-md-5">
+        <div class="col-md-6">
             <div style="text-align: center;">
                 <h3 class="mb-4">Pesan Unit PS</h3>
                 
@@ -20,8 +20,8 @@
                            placeholder="Masukkan nomor HP" autocomplete="off">
                 </div>
 
-                <button id="searchBtn" class="btn btn-outline-primary btn-lg" style="width: 60px; height: 60px; border-radius: 50%;">
-                    <i class="fas fa-search fa-lg"></i>
+                <button id="searchBtn" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-search"></i> Cek No HP Anda
                 </button>
 
                 <div id="error" class="alert alert-danger d-none mt-3" role="alert"></div>
@@ -43,17 +43,7 @@
 
 <style>
 #searchBtn {
-    border-width: 2px;
-    transition: all 0.3s ease;
-}
-
-#searchBtn:hover {
-    background-color: #0d6efd;
-    color: white;
-}
-
-#searchBtn:disabled {
-    opacity: 0.6;
+    width: 100%;
 }
 </style>
 
@@ -79,7 +69,7 @@ searchBtn.addEventListener('click', function() {
     
     errorDiv.classList.add('d-none');
     searchBtn.disabled = true;
-    searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengecek...';
     
     fetch('<?= site_url('booking/search_customer') ?>', {
         method: 'POST',
@@ -93,7 +83,7 @@ searchBtn.addEventListener('click', function() {
             errorDiv.classList.remove('d-none');
             resultBox.classList.add('d-none');
             searchBtn.disabled = false;
-            searchBtn.innerHTML = '<i class="fas fa-search fa-lg"></i>';
+            searchBtn.innerHTML = '<i class="fas fa-search"></i> Cek No HP Anda';
             return;
         }
         
@@ -118,7 +108,7 @@ searchBtn.addEventListener('click', function() {
         }
         
         searchBtn.disabled = false;
-        searchBtn.innerHTML = '<i class="fas fa-search fa-lg"></i>';
+        searchBtn.innerHTML = '<i class="fas fa-search"></i> Cek No HP Anda';
     })
     .catch(e => {
         console.error(e);
@@ -126,7 +116,7 @@ searchBtn.addEventListener('click', function() {
         errorDiv.classList.remove('d-none');
         resultBox.classList.add('d-none');
         searchBtn.disabled = false;
-        searchBtn.innerHTML = '<i class="fas fa-search fa-lg"></i>';
+        searchBtn.innerHTML = '<i class="fas fa-search"></i> Cek No HP Anda';
     });
 });
 
