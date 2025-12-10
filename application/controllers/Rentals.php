@@ -18,6 +18,9 @@ class Rentals extends MY_Controller {
     public function index() {
         // Auto-cancel expired approved bookings (no customer arrival after 15 min)
         $this->cleanup_expired_approved_bookings();
+        
+        // Auto-complete ongoing rentals with expired duration
+        $this->auto_complete_expired_rentals();
 
         $data['title'] = 'Manajemen Penyewaan';
         $data['ongoing'] = $this->Rental_model->get_ongoing();
@@ -73,6 +76,64 @@ class Rentals extends MY_Controller {
             }
         } catch (Exception $e) {
             log_message('error', "Error in cleanup_expired_approved_bookings: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Auto-complete ongoing rentals when estimated duration expires
+     * Private method called automatically in index()
+     */
+    private function auto_complete_expired_rentals() {
+        try {
+            // Find all ongoing rentals with timer_started_at and check if duration expired
+            $this->db->select('r.id, r.timer_started_at, r.estimated_hours, r.start_time, r.console_id, r.customer_id, r.estimated_cost, c.price_per_hour');
+            $this->db->from('rentals r');
+            $this->db->join('consoles c', 'c.id = r.console_id', 'left');
+            $this->db->where('r.status', 'ongoing');
+            $this->db->where('r.timer_started_at IS NOT NULL', NULL, FALSE);
+            $ongoing_rentals = $this->db->get()->result_array();
+            
+            foreach ($ongoing_rentals as $rental) {
+                // Calculate if duration has expired
+                $timer_start = new DateTime($rental['timer_started_at']);
+                $now = new DateTime();
+                $elapsed_seconds = $now->getTimestamp() - $timer_start->getTimestamp();
+                $estimated_seconds = $rental['estimated_hours'] * 3600;
+                
+                // If elapsed time >= estimated time, auto-complete
+                if ($elapsed_seconds >= $estimated_seconds) {
+                    // Calculate actual duration in minutes
+                    $duration_minutes = ceil($elapsed_seconds / 60);
+                    
+                    // Calculate actual cost (but no charge more than estimated - just use estimated)
+                    $actual_cost_with_overage = ($rental['price_per_hour'] / 60) * $duration_minutes;
+                    $total_cost = max($actual_cost_with_overage, $rental['estimated_cost']);
+                    
+                    // For auto-complete, just use estimated cost (no overage charge)
+                    $total_cost = $rental['estimated_cost'];
+                    
+                    // Get current time as end time
+                    $end_time = date('Y-m-d H:i:s');
+                    
+                    // Update rental as finished
+                    $this->db->where('id', $rental['id']);
+                    $this->db->update('rentals', [
+                        'end_time' => $end_time,
+                        'duration_minutes' => $duration_minutes,
+                        'total_amount' => $total_cost,
+                        'status' => 'finished'
+                    ]);
+                    
+                    // Restore console to available
+                    $this->db->where('id', $rental['console_id']);
+                    $this->db->update('consoles', ['status' => 'available']);
+                    
+                    // Log action
+                    log_message('info', "Auto-completed rental: ID={$rental['id']}, Duration={$duration_minutes}min, Cost=Rp{$total_cost}");
+                }
+            }
+        } catch (Exception $e) {
+            log_message('error', "Error in auto_complete_expired_rentals: " . $e->getMessage());
         }
     }
 
