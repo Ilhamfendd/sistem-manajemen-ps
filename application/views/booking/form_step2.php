@@ -1,45 +1,39 @@
-<?php $this->load->view('layouts/header_booking', ['title' => $title]); ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $title ?></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="background-color: #f8f9fa; padding: 40px 20px;">
 
-<div class="container mt-5">
+<div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white p-3">
-                    <h5 class="mb-0"><i class="fas fa-user"></i> <?= $title ?></h5>
-                    <small>Langkah 2 dari 4</small>
-                </div>
-                <div class="card-body p-4">
+        <div class="col-md-5">
+            <div style="text-align: center;">
+                <h3 class="mb-4">Masukkan Nama Anda</h3>
+                
+                <form id="step2Form" method="POST" action="<?= site_url('booking/form_step3') ?>">
+                    <input type="hidden" name="phone" value="<?= $phone ?>">
+                    
                     <div class="mb-4">
-                        <h6>Data Pelanggan Baru</h6>
-                        <p class="text-muted">Nomor HP Anda belum terdaftar, silakan isi nama lengkap</p>
+                        <input type="text" class="form-control form-control-lg" id="full_name" name="full_name" 
+                               placeholder="Nama lengkap" required autocomplete="off">
                     </div>
 
-                    <form id="step2Form" method="POST">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Nomor HP</label>
-                            <input type="tel" class="form-control" value="<?= $phone ?>" disabled>
-                            <input type="hidden" name="phone" value="<?= $phone ?>">
-                        </div>
+                    <div id="error" class="alert alert-danger d-none" role="alert"></div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Nama Lengkap <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control form-control-lg" id="full_name" name="full_name" 
-                                   placeholder="Contoh: Budi Santoso" required>
-                            <small class="text-muted">Masukkan nama lengkap Anda</small>
-                        </div>
-
-                        <div id="error" class="alert alert-danger d-none" role="alert"></div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-arrow-right"></i> Lanjut (Next)
-                            </button>
-                            <a href="<?= site_url('booking') ?>" class="btn btn-outline-secondary btn-lg">
-                                <i class="fas fa-arrow-left"></i> Kembali
-                            </a>
-                        </div>
-                    </form>
-                </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-arrow-right"></i> Lanjut
+                        </button>
+                        <a href="<?= site_url('booking') ?>" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Kembali
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -63,4 +57,6 @@ document.getElementById('step2Form').addEventListener('submit', function(e) {
 });
 </script>
 
-<?php $this->load->view('layouts/footer'); ?>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
