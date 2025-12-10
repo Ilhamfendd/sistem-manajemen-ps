@@ -94,15 +94,21 @@ class Consoles extends MY_Controller {
         $old_console = $this->Console_model->find($id);
         $old_price = $old_console->price_per_hour;
         $new_price = $this->input->post('price_per_hour', TRUE);
+        $new_status = $this->input->post('status', TRUE);
+
+        // Debug logging
+        error_log("Console Update ID: $id, Status from POST: " . var_export($new_status, true));
 
         // Update console
         $payload = [
             'console_name' => $this->input->post('console_name', TRUE),
             'console_type' => $this->input->post('console_type', TRUE),
             'price_per_hour' => $new_price,
-            'status' => $this->input->post('status', TRUE),
+            'status' => $new_status,
             'note' => $this->input->post('note', TRUE)
         ];
+
+        error_log("Payload to update: " . var_export($payload, true));
 
         $this->Console_model->update($id, $payload);
 
