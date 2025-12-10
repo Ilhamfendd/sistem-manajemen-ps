@@ -2,106 +2,142 @@
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white p-3">
-                    <h5 class="mb-0"><i class="fas fa-phone"></i> <?= $title ?></h5>
-                    <small>Langkah 1 dari 4</small>
+        <div class="col-md-5">
+            <div style="text-align: center;">
+                <h3 class="mb-4">Cari Nomor HP Anda</h3>
+                
+                <div class="mb-4">
+                    <input type="tel" class="form-control form-control-lg" id="phone" 
+                           placeholder="08xxxxxxxxx" autocomplete="off">
                 </div>
-                <div class="card-body p-4">
-                    <div class="mb-4">
-                        <h6>Masukkan Nomor HP Anda</h6>
-                        <p class="text-muted">Kami akan mengecek apakah nomor Anda sudah terdaftar di sistem</p>
+
+                <button id="searchBtn" class="btn btn-outline-primary btn-lg" style="width: 60px; height: 60px; border-radius: 50%;">
+                    <i class="fas fa-search fa-lg"></i>
+                </button>
+
+                <div id="error" class="alert alert-danger d-none mt-3" role="alert"></div>
+
+                <div id="resultBox" class="d-none mt-4">
+                    <div class="text-center">
+                        <p class="text-muted mb-2">Selamat datang kembali,</p>
+                        <h5 id="customerName" class="mb-4"></h5>
+                        <button id="continueBtn" class="btn btn-primary btn-lg w-100">Lanjut Booking</button>
                     </div>
-
-                    <form id="step1Form">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Nomor HP <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control form-control-lg" id="phone" name="phone" 
-                                   placeholder="08xxxxxxxxx" required>
-                            <small class="text-muted">Format: 08xxxxxxxxx (11-13 digit)</small>
-                        </div>
-
-                        <div id="phoneError" class="alert alert-danger d-none" role="alert"></div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg" id="nextBtn">
-                                <i class="fas fa-arrow-right"></i> Lanjut (Next)
-                            </button>
-                            <a href="<?= site_url('home') ?>" class="btn btn-outline-secondary btn-lg">
-                                <i class="fas fa-home"></i> Kembali ke Home
-                            </a>
-                        </div>
-                    </form>
                 </div>
+
+                <hr class="my-4">
+                <a href="<?= site_url('home') ?>" class="text-muted text-decoration-none">← Kembali ke Home</a>
             </div>
         </div>
     </div>
 </div>
 
+<style>
+#searchBtn {
+    border-width: 2px;
+    transition: all 0.3s ease;
+}
+
+#searchBtn:hover {
+    background-color: #0d6efd;
+    color: white;
+}
+
+#searchBtn:disabled {
+    opacity: 0.6;
+}
+</style>
+
 <script>
-document.getElementById('step1Form').addEventListener('submit', function(e) {
-    e.preventDefault();
+const phone = document.getElementById('phone');
+const searchBtn = document.getElementById('searchBtn');
+const errorDiv = document.getElementById('error');
+const resultBox = document.getElementById('resultBox');
+const customerName = document.getElementById('customerName');
+const continueBtn = document.getElementById('continueBtn');
+
+let lastSearchResult = null;
+
+searchBtn.addEventListener('click', function() {
+    const phoneValue = phone.value.trim();
     
-    const phone = document.getElementById('phone').value;
-    const phoneError = document.getElementById('phoneError');
-    const nextBtn = document.getElementById('nextBtn');
-    
-    // Validate
-    if (!phone || phone.length < 10) {
-        phoneError.textContent = 'Nomor HP tidak valid (minimal 10 digit)';
-        phoneError.classList.remove('d-none');
+    if (!phoneValue || phoneValue.length < 10) {
+        errorDiv.textContent = 'Nomor HP tidak valid (minimal 10 digit)';
+        errorDiv.classList.remove('d-none');
+        resultBox.classList.add('d-none');
         return;
     }
     
-    phoneError.classList.add('d-none');
-    nextBtn.disabled = true;
-    nextBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengecek...';
+    errorDiv.classList.add('d-none');
+    searchBtn.disabled = true;
+    searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     
     fetch('<?= site_url('booking/search_customer') ?>', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'phone=' + encodeURIComponent(phone)
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'phone=' + encodeURIComponent(phoneValue)
     })
     .then(r => r.json())
     .then(data => {
         if (!data.success) {
-            phoneError.textContent = data.message;
-            phoneError.classList.remove('d-none');
-            nextBtn.disabled = false;
-            nextBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Lanjut (Next)';
+            errorDiv.textContent = data.message;
+            errorDiv.classList.remove('d-none');
+            resultBox.classList.add('d-none');
+            searchBtn.disabled = false;
+            searchBtn.innerHTML = '<i class="fas fa-search fa-lg"></i>';
             return;
         }
         
-        // Redirect to next step
+        lastSearchResult = {
+            phone: phoneValue,
+            is_existing: data.is_existing,
+            customer: data.customer || null
+        };
+        
         if (data.is_existing) {
-            // Customer exists - go to step 3
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '<?= site_url('booking/form_step3') ?>';
-            form.innerHTML = '<input type="hidden" name="phone" value="' + phone + '">' +
-                             '<input type="hidden" name="full_name" value="' + data.customer.full_name + '">';
-            document.body.appendChild(form);
-            form.submit();
+            // Show existing customer welcome
+            customerName.textContent = data.customer.full_name;
+            resultBox.classList.remove('d-none');
         } else {
-            // New customer - go to step 2
+            // New customer - go directly to step 2
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = '<?= site_url('booking/form_step2') ?>';
-            form.innerHTML = '<input type="hidden" name="phone" value="' + phone + '">';
+            form.innerHTML = '<input type="hidden" name="phone" value="' + phoneValue + '">';
             document.body.appendChild(form);
             form.submit();
         }
+        
+        searchBtn.disabled = false;
+        searchBtn.innerHTML = '<i class="fas fa-search fa-lg"></i>';
     })
     .catch(e => {
         console.error(e);
-        phoneError.textContent = 'Terjadi kesalahan. Silakan coba lagi.';
-        phoneError.classList.remove('d-none');
-        nextBtn.disabled = false;
-        nextBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Lanjut (Next)';
+        errorDiv.textContent = 'Terjadi kesalahan. Silakan coba lagi.';
+        errorDiv.classList.remove('d-none');
+        resultBox.classList.add('d-none');
+        searchBtn.disabled = false;
+        searchBtn.innerHTML = '<i class="fas fa-search fa-lg"></i>';
     });
+});
+
+continueBtn.addEventListener('click', function() {
+    if (!lastSearchResult || !lastSearchResult.is_existing) return;
+    
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '<?= site_url('booking/form_step3') ?>';
+    form.innerHTML = '<input type="hidden" name="phone" value="' + lastSearchResult.phone + '">' +
+                     '<input type="hidden" name="full_name" value="' + lastSearchResult.customer.full_name + '">';
+    document.body.appendChild(form);
+    form.submit();
+});
+
+// Enter key to search
+phone.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchBtn.click();
+    }
 });
 </script>
 
