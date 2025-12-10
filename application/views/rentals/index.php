@@ -54,13 +54,17 @@
     <?php endif; ?>
 
     <!-- BOOKING PENDING SECTION -->
-    <?php if (!empty($pending_bookings)): ?>
     <div class="mb-5">
         <div class="d-flex align-items-center mb-3">
             <h4 class="mb-0"><i class="fas fa-hourglass-half text-warning"></i> Booking Menunggu Persetujuan</h4>
             <span class="badge bg-warning ms-2"><?= count($pending_bookings) ?></span>
         </div>
         
+        <?php if (empty($pending_bookings)): ?>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Tidak ada booking yang menunggu persetujuan
+            </div>
+        <?php else: ?>
         <div class="table-responsive">
             <table class="table table-hover table-striped">
                 <thead class="table-dark">
@@ -96,17 +100,21 @@
                 </tbody>
             </table>
         </div>
+        <?php endif; ?>
     </div>
-    <?php endif; ?>
 
     <!-- BOOKING APPROVED SECTION -->
-    <?php if (!empty($approved_bookings)): ?>
     <div class="mb-5">
         <div class="d-flex align-items-center mb-3">
             <h4 class="mb-0"><i class="fas fa-check text-info"></i> Booking Disetujui - Tunggu Pelanggan</h4>
             <span class="badge bg-info ms-2"><?= count($approved_bookings) ?></span>
         </div>
         
+        <?php if (empty($approved_bookings)): ?>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Tidak ada booking yang disetujui
+            </div>
+        <?php else: ?>
         <div class="table-responsive">
             <table class="table table-hover table-striped">
                 <thead class="table-dark">
@@ -139,8 +147,8 @@
                 </tbody>
             </table>
         </div>
+        <?php endif; ?>
     </div>
-    <?php endif; ?>
 
     <!-- ONGOING RENTALS SECTION -->
     <div class="mb-5">
