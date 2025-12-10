@@ -458,6 +458,48 @@ class Rentals extends MY_Controller {
     }
 
     /**
+     * Mark debt when customer cancel payment adjustment (batal on payment_adjustment page)
+     */
+    public function mark_debt($id) {
+        $rental = $this->Rental_model->find($id);
+        if (!$rental) show_404();
+
+        // Calculate paid amount
+        $this->db->select('SUM(amount) as total');
+        $this->db->where('rental_id', $id);
+        $paid_result = $this->db->get('transactions')->row_array();
+        $paid_amount = $paid_result['total'] ?? 0;
+
+        // Calculate outstanding debt
+        $outstanding = $rental->total_amount - $paid_amount;
+
+        // Only create debt record if there's outstanding amount
+        if ($outstanding > 0) {
+            // Record debt in debts table
+            $debt = [
+                'customer_id' => $rental->customer_id,
+                'rental_id' => $id,
+                'amount' => $outstanding,
+                'paid_amount' => 0,
+                'status' => 'unpaid',
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+            $this->db->insert('debts', $debt);
+
+            // Update rental payment_status to partial
+            $this->Rental_model->update($id, [
+                'payment_status' => 'partial'
+            ]);
+
+            log_message('info', "Debt recorded: Rental={$id}, Customer={$rental->customer_id}, Amount={$outstanding}");
+        }
+
+        // Redirect to rentals with notification
+        $this->session->set_flashdata('info', 'Hutang pelanggan tercatat. Sisa pembayaran: Rp ' . number_format($outstanding));
+        redirect('rentals');
+    }
+
+    /**
      * Delete rental (only finished, unpaid rentals)
      */
     public function delete($id) {

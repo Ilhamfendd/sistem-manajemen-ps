@@ -62,7 +62,7 @@
                             </div>
 
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <a href="<?php echo base_url('rentals'); ?>" class="btn btn-secondary">Batal</a>
+                                <button type="button" class="btn btn-secondary" onclick="window.location.href='<?php echo base_url('rentals/mark_debt/' . $rental['id']); ?>'">Batal</button>
                                 <button type="submit" class="btn btn-warning">
                                     <i class="fas fa-check-circle"></i> Bayar Tambahan
                                 </button>
