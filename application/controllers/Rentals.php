@@ -415,7 +415,6 @@ class Rentals extends MY_Controller {
         // Delete rental
         $this->Rental_model->delete($id);
 
-        $this->session->set_flashdata('success', 'Penyewaan berhasil dihapus beserta transaksi pembayaran.');
         redirect('rentals');
     }
 
