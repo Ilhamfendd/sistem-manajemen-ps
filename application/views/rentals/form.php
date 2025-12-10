@@ -1,6 +1,8 @@
 <?php $this->load->view('layouts/header', ['title' => $title]); ?>
 
 <div class="container mt-4">
+    <?php $this->load->view('layouts/notifications'); ?>
+
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card border-0 shadow">
@@ -8,12 +10,6 @@
                     <h5 class="mb-0"><i class="fas fa-plus-circle"></i> <?= $title ?></h5>
                 </div>
                 <div class="card-body">
-                    <?php if (validation_errors()): ?>
-                        <div class="alert alert-danger alert-dismissible fade show mb-3">
-                            <?= validation_errors() ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    <?php endif; ?>
 
                     <form method="post" action="<?= site_url('rentals/store') ?>" class="needs-validation">
 

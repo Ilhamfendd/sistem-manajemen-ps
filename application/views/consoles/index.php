@@ -1,26 +1,14 @@
 <?php $this->load->view('layouts/header', ['title' => $title]); ?>
 
 <div class="container mt-4">
+    <?php $this->load->view('layouts/notifications'); ?>
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-gamepad"></i> <?= $title ?></h2>
         <a class="btn btn-primary" href="<?= site_url('consoles/create') ?>">
             <i class="fas fa-plus"></i> Tambah Unit
         </a>
     </div>
-
-    <?php if ($this->session->flashdata('success')): ?>
-        <div class="alert alert-success alert-dismissible fade show mb-4">
-            <i class="fas fa-check-circle"></i> <?= $this->session->flashdata('success') ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
-
-    <?php if ($this->session->flashdata('error')): ?>
-        <div class="alert alert-danger alert-dismissible fade show mb-4">
-            <i class="fas fa-exclamation-circle"></i> <?= $this->session->flashdata('error') ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
 
     <?php if (empty($items)): ?>
         <div class="text-center py-5">

@@ -1,6 +1,8 @@
 <?php $this->load->view('layouts/header', ['title' => $title]); ?>
 
 <div class="container mt-4">
+    <?php $this->load->view('layouts/notifications'); ?>
+
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-sm">
@@ -9,13 +11,6 @@
                 </div>
 
                 <div class="card-body">
-                    <?php if (validation_errors()): ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle"></i> 
-                            <?= validation_errors() ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    <?php endif; ?>
 
                     <form method="post" action="<?= isset($item) ? site_url('customers/update/'.$item->id) : site_url('customers/store') ?>">
 

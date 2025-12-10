@@ -1,23 +1,11 @@
 <?php $this->load->view('layouts/header', ['title' => $title]); ?>
 
 <div class="container mt-4">
+    <?php $this->load->view('layouts/notifications'); ?>
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-list"></i> <?= $title ?></h2>
     </div>
-
-    <?php if ($this->session->flashdata('success')): ?>
-        <div class="alert alert-success alert-dismissible fade show mb-4">
-            <i class="fas fa-check-circle"></i> <?= $this->session->flashdata('success') ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
-
-    <?php if ($this->session->flashdata('error')): ?>
-        <div class="alert alert-danger alert-dismissible fade show mb-4">
-            <i class="fas fa-exclamation-circle"></i> <?= $this->session->flashdata('error') ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
 
     <!-- Total Outstanding Summary -->
     <div class="row mb-4">
