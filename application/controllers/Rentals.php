@@ -16,6 +16,9 @@ class Rentals extends MY_Controller {
      * List all rentals (ongoing and finished)
      */
     public function index() {
+        // Auto-cancel expired approved bookings (no customer arrival after 15 min)
+        $this->cleanup_expired_approved_bookings();
+
         $data['title'] = 'Manajemen Penyewaan';
         $data['ongoing'] = $this->Rental_model->get_ongoing();
         $data['finished'] = $this->Rental_model->get_finished();
@@ -37,6 +40,46 @@ class Rentals extends MY_Controller {
         $data['approved_bookings'] = $this->db->get()->result_array();
 
         $this->load->view('rentals/index', $data);
+    }
+
+    /**
+     * Auto-cleanup expired approved bookings (after 15 minutes with no customer arrival)
+     * Private method called automatically in index()
+     */
+    private function cleanup_expired_approved_bookings() {
+        try {
+            // Calculate expiry time: 15 minutes ago
+            $expiry_time = date('Y-m-d H:i:s', strtotime('-15 minutes'));
+            
+            // Find all approved bookings that haven't had customer arrival in 15 minutes
+            $this->db->select('b.id, b.console_id, b.full_name, b.phone');
+            $this->db->from('bookings b');
+            $this->db->where('b.status', 'approved');
+            $this->db->where('b.approved_at <', $expiry_time);
+            $expired_bookings = $this->db->get()->result_array();
+            
+            // Process each expired booking
+            foreach ($expired_bookings as $booking) {
+                // Update booking status to expired
+                $this->db->where('id', $booking['id']);
+                $this->db->update('bookings', [
+                    'status' => 'expired',
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
+                
+                // Restore console to available status
+                $this->db->where('id', $booking['console_id']);
+                $this->db->update('consoles', [
+                    'status' => 'available',
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
+                
+                // Log action for debugging
+                log_message('info', "Auto-expired booking: ID={$booking['id']}, Console={$booking['console_id']}, Customer={$booking['full_name']}");
+            }
+        } catch (Exception $e) {
+            log_message('error', "Error in cleanup_expired_approved_bookings: " . $e->getMessage());
+        }
     }
 
     /**
