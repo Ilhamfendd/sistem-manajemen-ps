@@ -2066,3 +2066,68 @@ body.dark-mode hr {
 
 /* Hide Bootstrap alerts */
 .alert { display: none !important; }
+
+/* Dark Mode - Notification Styles */
+body.dark-mode .notification {
+    background: #2a2a2a !important;
+    color: #e0e0e0;
+    border-left-color: inherit;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.dark-mode .notification-success {
+    background: linear-gradient(135deg, #1a3a2a 0%, #1f4a35 100%) !important;
+}
+
+body.dark-mode .notification-success .notification-title {
+    color: #4ade80 !important;
+}
+
+body.dark-mode .notification-success .notification-message {
+    color: #86efac !important;
+}
+
+body.dark-mode .notification-error {
+    background: linear-gradient(135deg, #3a1a1a 0%, #4a1f1f 100%) !important;
+}
+
+body.dark-mode .notification-error .notification-title {
+    color: #f87171 !important;
+}
+
+body.dark-mode .notification-error .notification-message {
+    color: #fca5a5 !important;
+}
+
+body.dark-mode .notification-warning {
+    background: linear-gradient(135deg, #3a3a1a 0%, #4a4a1f 100%) !important;
+}
+
+body.dark-mode .notification-warning .notification-title {
+    color: #facc15 !important;
+}
+
+body.dark-mode .notification-warning .notification-message {
+    color: #fde047 !important;
+}
+
+body.dark-mode .notification-info {
+    background: linear-gradient(135deg, #1a2a3a 0%, #1f3a4a 100%) !important;
+}
+
+body.dark-mode .notification-info .notification-title {
+    color: #60a5fa !important;
+}
+
+body.dark-mode .notification-info .notification-message {
+    color: #93c5fd !important;
+}
+
+body.dark-mode .notification-close {
+    color: #a0a0a0;
+}
+
+body.dark-mode .notification-close:hover {
+    color: #e0e0e0;
+}
+
