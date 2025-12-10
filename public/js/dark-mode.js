@@ -1,96 +1,61 @@
-﻿// ============================================
-// DARK MODE - Apply theme IMMEDIATELY (before DOM renders)
-// ============================================
-(function () {
-// Wait for body to be available
-function applyTheme() {
-if (!document.body) {
-setTimeout(applyTheme, 10);
-return;
-}
-
-const savedTheme = localStorage.getItem("theme") || "light-mode";
-if (savedTheme === "dark-mode") {
-document.documentElement.classList.add("dark-mode");
-document.body.classList.add("dark-mode");
-}
-}
-
-if (document.readyState === "loading") {
-document.addEventListener("DOMContentLoaded", applyTheme);
-} else {
-applyTheme();
-}
-})();
-
-// ============================================
-// DARK MODE TOGGLE & MANAGEMENT
-// ============================================
+﻿// Dark Mode Toggle
 window.toggleDarkMode = function (e) {
-if (e) {
-e.preventDefault();
-e.stopPropagation();
-}
+	if (e) {
+		e.preventDefault();
+		e.stopPropagation();
+	}
 
-const currentTheme = localStorage.getItem("theme") || "light-mode";
-const newTheme = currentTheme === "dark-mode" ? "light-mode" : "dark-mode";
+	const body = document.body;
+	const currentTheme = localStorage.getItem("theme") || "light-mode";
+	const newTheme = currentTheme === "dark-mode" ? "light-mode" : "dark-mode";
 
-// Remove all dark-mode classes
-document.documentElement.classList.remove("dark-mode");
-document.body.classList.remove("dark-mode");
+	// Update classes
+	body.classList.remove("dark-mode", "light-mode");
+	body.classList.add(newTheme);
+	document.documentElement.classList.remove("dark-mode", "light-mode");
+	document.documentElement.classList.add(newTheme);
 
-// Add appropriate class
-if (newTheme === "dark-mode") {
-document.documentElement.classList.add("dark-mode");
-document.body.classList.add("dark-mode");
-}
+	// Update localStorage
+	localStorage.setItem("theme", newTheme);
 
-localStorage.setItem("theme", newTheme);
-updateThemeButton();
-
-// Force repaint
-document.body.offsetHeight;
+	// Update button icon
+	const btn = document.getElementById("themeToggle");
+	if (btn) {
+		if (newTheme === "dark-mode") {
+			btn.innerHTML = '<i class="fas fa-sun"></i>';
+			btn.title = "Switch to Light Mode";
+		} else {
+			btn.innerHTML = '<i class="fas fa-moon"></i>';
+			btn.title = "Switch to Dark Mode";
+		}
+	}
 };
 
-function updateThemeButton() {
-const themeToggle = document.getElementById("themeToggle");
-if (!themeToggle) return;
+// Apply saved theme on page load
+document.addEventListener("DOMContentLoaded", function () {
+	const savedTheme = localStorage.getItem("theme") || "light-mode";
+	document.body.classList.add(savedTheme);
+	document.documentElement.classList.add(savedTheme);
 
-const currentTheme = localStorage.getItem("theme") || "light-mode";
-
-if (currentTheme === "dark-mode") {
-themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-themeToggle.title = "Switch to Light Mode";
-themeToggle.classList.add("dark-mode-active");
-} else {
-themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-themeToggle.title = "Switch to Dark Mode";
-themeToggle.classList.remove("dark-mode-active");
-}
-}
-
-// Initialize handlers
-function setupDarkModeHandler() {
-const themeToggle = document.getElementById("themeToggle");
-if (!themeToggle) {
-setTimeout(setupDarkModeHandler, 100);
-return;
-}
-
-// Add click handler directly - don't clone element
-themeToggle.addEventListener("click", function(e) {
-e.preventDefault();
-e.stopPropagation();
-window.toggleDarkMode(e);
-return false;
+	// Update button icon based on saved theme
+	const btn = document.getElementById("themeToggle");
+	if (btn) {
+		if (savedTheme === "dark-mode") {
+			btn.innerHTML = '<i class="fas fa-sun"></i>';
+			btn.title = "Switch to Light Mode";
+		} else {
+			btn.innerHTML = '<i class="fas fa-moon"></i>';
+			btn.title = "Switch to Dark Mode";
+		}
+	}
 });
 
-updateThemeButton();
-}
-
-// Setup when DOM ready
-if (document.readyState === "loading") {
-document.addEventListener("DOMContentLoaded", setupDarkModeHandler);
-} else {
-setupDarkModeHandler();
+// Also apply theme immediately if DOM already loaded
+if (
+	document.readyState === "interactive" ||
+	document.readyState === "complete"
+) {
+	const savedTheme = localStorage.getItem("theme") || "light-mode";
+	document.body.classList.add(savedTheme);
+	document.documentElement.classList.add(savedTheme);
 }
