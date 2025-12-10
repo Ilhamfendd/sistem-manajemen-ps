@@ -169,16 +169,15 @@ class Reports extends MY_Controller {
                  ->order_by('total_amount', 'DESC');
         $data['payment_methods'] = $this->db->get()->result_array();
 
-        $this->db->select('rentals.id, rentals.status, customers.full_name, consoles.console_name, rentals.total_amount, COALESCE(SUM(transactions.amount), 0) as paid_amount')
+        $this->db->select('customers.full_name as customer_name, customers.phone as customer_phone, rentals.payment_status as status, COUNT(rentals.id) as rental_count, SUM(rentals.total_amount) as total_amount, COALESCE(SUM(transactions.amount), 0) as paid_amount')
                  ->from('rentals')
                  ->join('customers', 'customers.id = rentals.customer_id', 'left')
-                 ->join('consoles', 'consoles.id = rentals.console_id', 'left')
                  ->join('transactions', 'transactions.rental_id = rentals.id', 'left')
                  ->where('rentals.payment_status !=', 'paid')
                  ->where('DATE(rentals.created_at) >=', $start_date)
                  ->where('DATE(rentals.created_at) <=', $end_date)
-                 ->group_by('rentals.id')
-                 ->order_by('rentals.created_at', 'DESC');
+                 ->group_by('rentals.customer_id')
+                 ->order_by('total_amount', 'DESC');
         $data['outstanding_payments'] = $this->db->get()->result_array();
 
         $this->load->view('reports/payment_analysis', $data);
