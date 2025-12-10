@@ -46,6 +46,9 @@
                                         <option value="available" <?= isset($item) && $item->status == 'available' ? 'selected' : '' ?>>
                                             <i class="fas fa-check-circle"></i> Tersedia
                                         </option>
+                                        <option value="di_pesan" <?= isset($item) && $item->status == 'di_pesan' ? 'selected' : '' ?>>
+                                            <i class="fas fa-calendar-check"></i> Dipesan
+                                        </option>
                                         <option value="in_use" <?= isset($item) && $item->status == 'in_use' ? 'selected' : '' ?>>
                                             <i class="fas fa-play-circle"></i> Sedang Dipakai
                                         </option>
