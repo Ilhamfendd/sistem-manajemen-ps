@@ -73,7 +73,6 @@ class Customers extends MY_Controller {
 
     public function delete($id) {
         $this->Customer_model->delete($id);
-        $this->session->set_flashdata('success', 'Pelanggan berhasil dihapus.');
         redirect('customers');
     }
 }

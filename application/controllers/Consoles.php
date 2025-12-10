@@ -147,7 +147,6 @@ class Consoles extends MY_Controller {
         }
 
         $this->Console_model->delete($id);
-        $this->session->set_flashdata('success', 'Unit berhasil dihapus.');
         redirect('consoles');
     }
 
