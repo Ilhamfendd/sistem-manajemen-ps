@@ -125,6 +125,7 @@
                         <th>Unit PS</th>
                         <th>Durasi</th>
                         <th>Total</th>
+                        <th>Timer</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -137,6 +138,11 @@
                         <td><?= $b['console_name'] ?> (<?= $b['console_type'] ?>)</td>
                         <td><?= $b['duration_hours'] ?> jam</td>
                         <td><strong>Rp <?= number_format($b['estimated_cost']) ?></strong></td>
+                        <td>
+                            <div class="timer" id="timer_<?= $b['id'] ?>" data-expires="<?= $b['expires_at'] ?>">
+                                <small class="text-danger fw-bold">--:--</small>
+                            </div>
+                        </td>
                         <td>
                             <button class="btn btn-sm btn-primary" onclick="customerArrived(<?= $b['id'] ?>)">
                                 <i class="fas fa-user-check"></i> Pelanggan Datang
@@ -411,6 +417,31 @@ function customerArrived(bookingId) {
     })
     .catch(e => alert('Error: ' + e));
 }
+
+// Timer countdown untuk approved bookings
+function updateApprovedTimers() {
+    document.querySelectorAll('.timer').forEach(timerEl => {
+        const expiresAt = timerEl.dataset.expires;
+        const now = new Date().getTime();
+        const expireTime = new Date(expiresAt).getTime();
+        const remaining = expireTime - now;
+        
+        if (remaining <= 0) {
+            timerEl.innerHTML = '<small class="text-danger fw-bold">Waktu Habis</small>';
+            return;
+        }
+        
+        const minutes = Math.floor((remaining / (1000 * 60)) % 60);
+        const seconds = Math.floor((remaining / 1000) % 60);
+        const timeStr = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+        
+        timerEl.innerHTML = '<small class="text-danger fw-bold">' + timeStr + '</small>';
+    });
+}
+
+// Update timers setiap detik
+setInterval(updateApprovedTimers, 1000);
+updateApprovedTimers(); // Initial update
 </script>
 
 <?php $this->load->view('layouts/footer'); ?>
