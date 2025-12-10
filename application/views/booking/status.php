@@ -1,4 +1,4 @@
-<?php $this->load->view('layouts/header', ['title' => $title]); ?>
+<?php $this->load->view('layouts/header_booking', ['title' => $title]); ?>
 
 <div class="container mt-5">
     <div class="row justify-content-center">

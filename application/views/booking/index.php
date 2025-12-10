@@ -1,4 +1,4 @@
-<?php $this->load->view('layouts/header', ['title' => $title]); ?>
+<?php $this->load->view('layouts/header_booking', ['title' => $title]); ?>
 
 <div class="container mt-4">
     <div class="d-flex align-items-center mb-4">
