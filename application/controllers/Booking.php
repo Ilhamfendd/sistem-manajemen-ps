@@ -141,7 +141,7 @@ class Booking extends CI_Controller {
             'estimated_cost' => $total_price,
             'status' => 'pending',
             'created_at' => date('Y-m-d H:i:s'),
-            'expires_at' => date('Y-m-d H:i:s', strtotime('+24 hours'))
+            'expires_at' => date('Y-m-d H:i:s', strtotime('+15 minutes'))
         ];
         
         if ($this->db->insert('bookings', $booking_data)) {
