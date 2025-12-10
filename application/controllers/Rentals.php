@@ -62,17 +62,11 @@ class Rentals extends MY_Controller {
             foreach ($expired_bookings as $booking) {
                 // Update booking status to expired
                 $this->db->where('id', $booking['id']);
-                $this->db->update('bookings', [
-                    'status' => 'expired',
-                    'updated_at' => date('Y-m-d H:i:s')
-                ]);
+                $this->db->update('bookings', ['status' => 'expired']);
                 
                 // Restore console to available status
                 $this->db->where('id', $booking['console_id']);
-                $this->db->update('consoles', [
-                    'status' => 'available',
-                    'updated_at' => date('Y-m-d H:i:s')
-                ]);
+                $this->db->update('consoles', ['status' => 'available']);
                 
                 // Log action for debugging
                 log_message('info', "Auto-expired booking: ID={$booking['id']}, Console={$booking['console_id']}, Customer={$booking['full_name']}");
