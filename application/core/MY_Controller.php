@@ -61,24 +61,17 @@ class MY_Controller extends CI_Controller {
     }
 
     /**
-     * Shortcut untuk admin only
-     */
-    protected function require_admin() {
-        $this->require_role('admin');
-    }
-
-    /**
-     * Shortcut untuk kasir only
+     * Shortcut untuk kasir only (formerly admin)
      */
     protected function require_kasir() {
         $this->require_role('kasir');
     }
 
     /**
-     * Shortcut untuk admin dan owner (management roles)
+     * Shortcut untuk kasir dan owner (management roles)
      */
     protected function require_management() {
-        $this->require_any_role(['admin', 'owner']);
+        $this->require_any_role(['kasir', 'owner']);
     }
 
     /**
@@ -103,10 +96,10 @@ class MY_Controller extends CI_Controller {
     }
 
     /**
-     * Check if user is admin
+     * Check if user is kasir
      */
-    protected function is_admin() {
-        return $this->user_role === 'admin';
+    protected function is_kasir() {
+        return $this->user_role === 'kasir';
     }
 
     /**
@@ -114,13 +107,6 @@ class MY_Controller extends CI_Controller {
      */
     protected function is_owner() {
         return $this->user_role === 'owner';
-    }
-
-    /**
-     * Check if user is kasir
-     */
-    protected function is_kasir() {
-        return $this->user_role === 'kasir';
     }
 
     /**

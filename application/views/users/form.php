@@ -47,7 +47,7 @@
             <label for="role">Role</label>
             <select id="role" name="role" required>
                 <option value="">-- Pilih Role --</option>
-                <option value="admin" <?= (isset($user) && !is_null($user) && $user->role == 'admin') ? 'selected' : (set_value('role') == 'admin' ? 'selected' : '') ?>>Admin</option>
+                <option value="kasir" <?= (isset($user) && !is_null($user) && $user->role == 'kasir') ? 'selected' : (set_value('role') == 'kasir' ? 'selected' : '') ?>>Kasir</option>
                 <option value="kasir" <?= (isset($user) && !is_null($user) && $user->role == 'kasir') ? 'selected' : (set_value('role') == 'kasir' ? 'selected' : '') ?>>Kasir</option>
                 <option value="owner" <?= (isset($user) && !is_null($user) && $user->role == 'owner') ? 'selected' : (set_value('role') == 'owner' ? 'selected' : '') ?>>Owner</option>
             </select>

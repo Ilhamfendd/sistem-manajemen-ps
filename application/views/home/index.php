@@ -472,6 +472,11 @@
                         </button>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link btn-sm btn-warning text-dark fw-bold ms-2" href="<?= base_url('booking') ?>" style="border-radius: 5px;">
+                            <i class="fas fa-calendar-check"></i> Pesan Sekarang
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link btn-sm btn-light text-primary fw-bold ms-2" href="<?= base_url('auth/login') ?>">
                             <i class="fas fa-sign-in-alt"></i> Login
                         </a>
@@ -486,7 +491,12 @@
         <div class="container">
             <h1><i class="fas fa-gamepad"></i> Selamat Datang di GO-KOPI</h1>
             <p>Nikmati pengalaman gaming PS4/PS5 terbaik dengan harga terjangkau</p>
-            <a href="#available" class="btn-primary-light">Lihat Ketersediaan Unit</a>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="<?= base_url('booking') ?>" class="btn-primary-light" style="background: #ffc107; color: #000; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-calendar-check"></i> Pesan Sekarang
+                </a>
+                <a href="#available" class="btn-primary-light">Lihat Ketersediaan Unit</a>
+            </div>
         </div>
     </div>
 

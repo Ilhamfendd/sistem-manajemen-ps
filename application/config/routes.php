@@ -100,6 +100,22 @@ $route['rentals/payment/(:num)'] = 'rentals/payment/$1';
 $route['rentals/process_payment/(:num)'] = 'rentals/process_payment/$1';
 $route['rentals/invoice/(:num)'] = 'rentals/invoice/$1';
 $route['rentals/delete/(:num)'] = 'rentals/delete/$1';
+$route['rentals/start_play/(:num)'] = 'rentals/start_play/$1';
+$route['rentals/collect_payment/(:num)'] = 'rentals/collect_payment/$1';
+$route['rentals/process_collect_payment/(:num)'] = 'rentals/process_collect_payment/$1';
+
+$route['debts'] = 'debts/index';
+$route['debts/customer_detail/(:num)'] = 'debts/customer_detail/$1';
+
+$route['booking'] = 'booking/index';
+$route['booking/search_customer'] = 'booking/search_customer';
+$route['booking/booking_form'] = 'booking/booking_form';
+$route['booking/store'] = 'booking/store';
+$route['booking/success'] = 'booking/success';
+$route['booking/manage'] = 'booking/manage';
+$route['booking/approve/(:num)'] = 'booking/approve/$1';
+$route['booking/reject/(:num)'] = 'booking/reject/$1';
+$route['booking/process_payment/(:num)'] = 'booking/process_payment/$1';
 
 $route['users'] = 'users/index';
 $route['users/create'] = 'users/create';

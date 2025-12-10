@@ -3,7 +3,7 @@
 <div class="container mt-4">
     <div class="mb-4">
         <h2><i class="fas fa-users-cog"></i> <?= $title ?></h2>
-        <p class="text-muted">Halaman ini hanya bisa diakses oleh <strong>Admin</strong>.</p>
+        <p class="text-muted">Halaman ini hanya bisa diakses oleh <strong>Kasir</strong>.</p>
     </div>
 
     <?php if (empty($items)): ?>
@@ -31,7 +31,7 @@
                         <td>
                             <?php
                                 $role = ucfirst($u->role);
-                                if ($u->role == 'admin') {
+                                if ($u->role == 'kasir') {
                                     echo '<span class="badge bg-danger"><i class="fas fa-crown"></i> ' . $role . '</span>';
                                 } elseif ($u->role == 'kasir') {
                                     echo '<span class="badge bg-warning"><i class="fas fa-cash-register"></i> ' . $role . '</span>';

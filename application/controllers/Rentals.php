@@ -365,4 +365,157 @@ class Rentals extends MY_Controller {
         $this->session->set_flashdata('success', 'Penyewaan berhasil dihapus beserta transaksi pembayaran.');
         redirect('rentals');
     }
+
+    /**
+     * Collect payment for unpaid or partially paid rentals
+     */
+    public function collect_payment($id) {
+        $rental = $this->Rental_model->find($id);
+        if (!$rental) show_404();
+
+        if ($rental->status != 'finished') {
+            $this->session->set_flashdata('error', 'Hanya bisa menerima pembayaran dari penyewaan yang sudah selesai.');
+            redirect('rentals');
+            return;
+        }
+
+        // Calculate paid amount
+        $this->db->select('SUM(amount) as total');
+        $this->db->where('rental_id', $id);
+        $paid_result = $this->db->get('transactions')->row_array();
+        $paid_amount = $paid_result['total'] ?? 0;
+
+        $outstanding = $rental->total_amount - $paid_amount;
+
+        if ($outstanding <= 0) {
+            $this->session->set_flashdata('error', 'Pembayaran penyewaan ini sudah selesai.');
+            redirect('rentals');
+            return;
+        }
+
+        // Get customer and console info
+        $customer = $this->Customer_model->find($rental->customer_id);
+        $console = $this->Console_model->find($rental->console_id);
+
+        $data['title'] = 'Terima Pembayaran - Penyewaan #' . $id;
+        $data['rental'] = [
+            'id' => $rental->id,
+            'customer_id' => $rental->customer_id,
+            'customer_name' => $customer->full_name,
+            'console_name' => $console->console_name,
+            'total_amount' => $rental->total_amount,
+            'paid_amount' => $paid_amount,
+            'outstanding' => $outstanding
+        ];
+        $data['payment_methods'] = $this->Payment_method_model->get_all();
+
+        $this->load->view('rentals/collect_payment', $data);
+    }
+
+    /**
+     * Process debt payment
+     */
+    public function process_collect_payment($id) {
+        $this->form_validation->set_rules('amount', 'Jumlah', 'required|numeric|greater_than[0]');
+        $this->form_validation->set_rules('payment_method', 'Metode Pembayaran', 'required|numeric');
+
+        if ($this->form_validation->run() == FALSE) {
+            return $this->collect_payment($id);
+        }
+
+        $rental = $this->Rental_model->find($id);
+        if (!$rental) show_404();
+
+        $amount = (int)$this->input->post('amount');
+        $payment_method_id = (int)$this->input->post('payment_method');
+        $notes = $this->input->post('notes');
+
+        // Get current paid amount
+        $this->db->select('SUM(amount) as total');
+        $this->db->where('rental_id', $id);
+        $paid_result = $this->db->get('transactions')->row_array();
+        $paid_amount = $paid_result['total'] ?? 0;
+
+        $new_total_paid = $paid_amount + $amount;
+
+        // Determine payment status
+        if ($new_total_paid >= $rental->total_amount) {
+            $payment_status = 'paid';
+        } elseif ($new_total_paid > 0) {
+            $payment_status = 'partial';
+        } else {
+            $payment_status = 'pending';
+        }
+
+        // Record payment transaction
+        $transaction = [
+            'rental_id' => $id,
+            'amount' => $amount,
+            'payment_method_id' => $payment_method_id,
+            'paid_at' => date('Y-m-d H:i:s'),
+            'change_amount' => max(0, $new_total_paid - $rental->total_amount),
+            'created_by' => $this->get_user_id(),
+            'notes' => 'Pembayaran cicilan/pelunasan. ' . ($notes ? $notes : '')
+        ];
+
+        $this->db->insert('transactions', $transaction);
+
+        // Update rental payment status
+        $this->Rental_model->update($id, [
+            'payment_status' => $payment_status
+        ]);
+
+        $this->session->set_flashdata('success', 'Pembayaran Rp ' . number_format($amount, 0, ',', '.') . ' berhasil dicatat.');
+        
+        redirect('rentals');
+    }
+
+    /**
+     * Start timer for rental
+     */
+    public function start_timer($id) {
+        $rental = $this->Rental_model->find($id);
+        if (!$rental) {
+            echo json_encode(['success' => false, 'message' => 'Rental tidak ditemukan']);
+            return;
+        }
+
+        if ($rental->status != 'ongoing') {
+            echo json_encode(['success' => false, 'message' => 'Rental tidak aktif']);
+            return;
+        }
+
+        // Record timer start time
+        $this->Rental_model->update($id, [
+            'timer_started_at' => date('Y-m-d H:i:s')
+        ]);
+
+        echo json_encode(['success' => true, 'timer_started_at' => date('Y-m-d H:i:s')]);
+    }
+
+    /**
+     * Start play - simple redirect to record timer and show finish button
+     */
+    public function start_play($id) {
+        $rental = $this->Rental_model->find($id);
+        if (!$rental) {
+            $this->session->set_flashdata('error', 'Rental tidak ditemukan');
+            redirect('rentals');
+            return;
+        }
+
+        if ($rental->status != 'ongoing') {
+            $this->session->set_flashdata('error', 'Rental tidak aktif');
+            redirect('rentals');
+            return;
+        }
+
+        // Record timer start time
+        $this->Rental_model->update($id, [
+            'timer_started_at' => date('Y-m-d H:i:s')
+        ]);
+
+        $this->session->set_flashdata('success', 'Timer dimulai untuk penyewaan #' . $id);
+        redirect('rentals');
+    }
 }

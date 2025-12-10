@@ -6,7 +6,7 @@ class Consoles extends MY_Controller {
     public function __construct() {
         parent::__construct();
         $this->require_login();
-        $this->require_admin();  // ADMIN ONLY
+        $this->require_kasir();  // KASIR ONLY
         
         $this->load->model(['Console_model', 'Payment_method_model']);
         $this->load->library('form_validation');

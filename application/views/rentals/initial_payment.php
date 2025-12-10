@@ -8,9 +8,7 @@
                     <h4 class="mb-0">Pembayaran Awal Penyewaan</h4>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-info">
-                        <strong>Penyewaan Baru</strong> - Pembayaran di awal berdasarkan estimasi durasi
-                    </div>
+
 
                     <!-- Rental Details -->
                     <div class="row mb-4">
@@ -62,12 +60,8 @@
                                 class="form-control form-control-lg" 
                                 value="<?php echo isset($rental['estimated_cost']) ? $rental['estimated_cost'] : 0; ?>"
                                 min="0"
-                                step="1000"
                                 required
                             >
-                            <small class="text-muted">
-                                Anda dapat membayar sebagian dari estimasi atau jumlah penuh
-                            </small>
                         </div>
 
                         <div class="form-group mb-3">
@@ -89,17 +83,6 @@
                         </div>
                     </form>
                 </div>
-            </div>
-
-            <!-- Info Box -->
-            <div class="alert alert-warning mt-4" role="alert">
-                <h6 class="alert-heading">Catatan Penting</h6>
-                <ul class="mb-0">
-                    <li>Pembayaran awal ini berdasarkan estimasi durasi yang dipilih</li>
-                    <li>Biaya akhir dapat berbeda jika durasi aktual berbeda</li>
-                    <li>Selisih biaya akan disesuaikan saat penyewaan selesai</li>
-                    <li>Anda dapat membayar sebagian atau penuh sesuai kemampuan</li>
-                </ul>
             </div>
         </div>
     </div>

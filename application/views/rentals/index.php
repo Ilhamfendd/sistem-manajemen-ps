@@ -35,7 +35,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-cash-register"></i> <?= $title ?></h2>
         <a class="btn btn-primary" href="<?= site_url('rentals/create') ?>">
-            <i class="fas fa-plus"></i> Mulai Penyewaan Baru
+            Mulai Penyewaan Baru
         </a>
     </div>
 
@@ -103,9 +103,15 @@
                         </div>
 
                         <div class="card-footer bg-light p-2">
-                            <a href="<?= site_url('rentals/finish/'.$r->id) ?>" class="btn btn-sm btn-warning w-100" style="font-size: 0.8rem;">
-                                <i class="fas fa-stop-circle"></i> Selesai
-                            </a>
+                            <?php if ($r->timer_started_at): ?>
+                                <a href="<?= site_url('rentals/finish/'.$r->id) ?>" class="btn btn-sm btn-success w-100" style="font-size: 0.8rem;">
+                                    <i class="fas fa-check"></i> Selesai
+                                </a>
+                            <?php else: ?>
+                                <a href="<?= site_url('rentals/start_play/'.$r->id) ?>" class="btn btn-sm btn-primary w-100" style="font-size: 0.8rem;">
+                                    <i class="fas fa-play"></i> Play
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -173,11 +179,13 @@
                                 ?>
                             </td>
                             <td>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <a href="<?= site_url('rentals/invoice/'.$r->id) ?>" class="btn btn-primary" title="Struk">
-                                        <i class="fas fa-receipt"></i>
-                                    </a>
-                                    <a href="<?= site_url('rentals/delete/'.$r->id) ?>" class="btn btn-danger" 
+                                <div style="display: flex; gap: 5px;">
+                                    <?php if ($r->payment_status == 'partial' || $r->payment_status == 'pending'): ?>
+                                        <a href="<?= site_url('rentals/collect_payment/'.$r->id) ?>" class="btn btn-sm btn-warning" title="Terima Pembayaran">
+                                            <i class="fas fa-money-bill"></i>
+                                        </a>
+                                    <?php endif; ?>
+                                    <a href="<?= site_url('rentals/delete/'.$r->id) ?>" class="btn btn-sm btn-danger" 
                                         onclick="return confirm('Hapus penyewaan #<?= $r->id ?>?')" title="Hapus">
                                         <i class="fas fa-trash"></i>
                                     </a>
@@ -195,44 +203,55 @@
 <script>
 <?php foreach ($ongoing as $r): ?>
 (function() {
-    const startTime = new Date("<?= date('c', strtotime($r->start_time)) ?>").getTime();
     const estimatedHours = <?= $r->estimated_hours ?>;
     const rentalId = <?= $r->id ?>;
-    const totalSeconds = estimatedHours * 3600; // Total seconds dari estimated hours
+    const totalSeconds = estimatedHours * 3600;
+    const timerStartedAt = '<?= $r->timer_started_at ?? '' ?>';
     
-    function updateCountdown() {
+    function displayTime(seconds) {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        
+        return (hours < 10 ? "0" + hours : hours) + ":" +
+               (minutes < 10 ? "0" + minutes : minutes) + ":" +
+               (secs < 10 ? "0" + secs : secs);
+    }
+    
+    function calculateRemainingTime() {
+        if (!timerStartedAt) {
+            return totalSeconds;
+        }
+        
+        const startTime = new Date(timerStartedAt).getTime();
         const now = new Date().getTime();
         const elapsedMs = now - startTime;
         const elapsedSec = Math.floor(elapsedMs / 1000);
         
-        // Countdown: kurangi total seconds dengan elapsed seconds
-        let remainingSec = totalSeconds - elapsedSec;
-        if (remainingSec < 0) remainingSec = 0;
-        
-        // Calculate countdown time (HH:MM:SS format)
-        const hours = Math.floor(remainingSec / 3600);
-        const minutes = Math.floor((remainingSec % 3600) / 60);
-        const seconds = remainingSec % 60;
-        
-        const countdownStr = 
-            (hours < 10 ? "0" + hours : hours) + ":" +
-            (minutes < 10 ? "0" + minutes : minutes) + ":" +
-            (seconds < 10 ? "0" + seconds : seconds);
-        
-        const durationElement = document.getElementById("duration-" + rentalId);
-        if (durationElement) {
-            durationElement.textContent = countdownStr;
-            
-            // Jika sudah 0:00:00, otomatis redirect ke finish
-            if (remainingSec <= 0) {
-                // Auto finish rental
-                window.location.href = "<?= site_url('rentals/finish/') ?>" + rentalId;
-            }
-        }
+        let remaining = totalSeconds - elapsedSec;
+        if (remaining < 0) remaining = 0;
+        return remaining;
     }
     
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
+    const durationElement = document.getElementById("duration-" + rentalId);
+    if (!durationElement) return;
+    
+    // Calculate and display initial time
+    let remainingSeconds = calculateRemainingTime();
+    durationElement.textContent = displayTime(remainingSeconds);
+    
+    // If timer was already started, run countdown
+    if (timerStartedAt) {
+        const interval = setInterval(() => {
+            remainingSeconds--;
+            durationElement.textContent = displayTime(remainingSeconds);
+            
+            if (remainingSeconds <= 0) {
+                clearInterval(interval);
+                window.location.href = "<?= site_url('rentals/finish/') ?>" + rentalId;
+            }
+        }, 1000);
+    }
 })();
 <?php endforeach; ?>
 </script>

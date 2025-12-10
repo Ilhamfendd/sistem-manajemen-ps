@@ -42,7 +42,6 @@
                                     class="form-control" 
                                     value="<?php echo $difference; ?>"
                                     min="0"
-                                    step="1000"
                                     required
                                 >
                             </div>

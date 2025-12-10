@@ -49,7 +49,7 @@ class Auth extends CI_Controller {
     }
 
     switch ($user['role']) {
-      case 'admin':
+      case 'kasir':
         return 'consoles';
       case 'kasir':
         return 'rentals';

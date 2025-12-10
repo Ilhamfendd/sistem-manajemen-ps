@@ -6,7 +6,7 @@ class Users extends MY_Controller {
     public function __construct() {
         parent::__construct();
         $this->require_login();
-        $this->require_role('admin');
+        $this->require_role('kasir');
         $this->load->model('User_model');
         $this->load->library('form_validation');
         $this->load->helper(['form', 'url']);
@@ -28,7 +28,7 @@ class Users extends MY_Controller {
         $this->form_validation->set_rules('name', 'Nama', 'required|min_length[3]');
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[users.email]');
         $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
-        $this->form_validation->set_rules('role', 'Role', 'required|in_list[admin,kasir,owner]');
+        $this->form_validation->set_rules('role', 'Role', 'required|in_list[kasir,owner]');
 
         if ($this->form_validation->run()) {
             $data = [
@@ -71,7 +71,7 @@ class Users extends MY_Controller {
 
         $this->form_validation->set_rules('name', 'Nama', 'required|min_length[3]');
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
-        $this->form_validation->set_rules('role', 'Role', 'required|in_list[admin,kasir,owner]');
+        $this->form_validation->set_rules('role', 'Role', 'required|in_list[kasir,owner]');
 
         if ($this->form_validation->run()) {
             $data = [

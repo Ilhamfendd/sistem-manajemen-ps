@@ -13,8 +13,8 @@ $uri1 = $this->uri->segment(1);
 
   <div class="sidebar-content">
     
-    <!-- Management Section - Admin -->
-    <?php if ($role == 'admin'): ?>
+    <!-- Management Section - Kasir -->
+    <?php if ($role == 'kasir'): ?>
       <div class="sidebar-section">
         <p class="sidebar-title">MANAJEMEN</p>
 
@@ -22,14 +22,7 @@ $uri1 = $this->uri->segment(1);
           <i class="fas fa-gamepad"></i>
           <span>Unit PS</span>
         </a>
-      </div>
-    <?php endif; ?>
 
-    <!-- Management Section - Kasir -->
-    <?php if ($role == 'kasir'): ?>
-      <div class="sidebar-section">
-        <p class="sidebar-title">MANAJEMEN</p>
-        
         <a href="<?= site_url('customers') ?>" class="sidebar-item <?= ($uri1 == 'customers') ? 'active' : '' ?>">
           <i class="fas fa-users"></i>
           <span>Pelanggan</span>
@@ -39,17 +32,15 @@ $uri1 = $this->uri->segment(1);
           <i class="fas fa-exchange-alt"></i>
           <span>Transaksi Sewa</span>
         </a>
-      </div>
-    <?php endif; ?>
 
-    <!-- Admin Section -->
-    <?php if ($role == 'admin'): ?>
-      <div class="sidebar-section">
-        <p class="sidebar-title">ADMIN</p>
+        <a href="<?= site_url('debts') ?>" class="sidebar-item <?= ($uri1 == 'debts') ? 'active' : '' ?>">
+          <i class="fas fa-list"></i>
+          <span>Daftar Hutang</span>
+        </a>
 
-        <a href="<?= site_url('users') ?>" class="sidebar-item <?= ($uri1 == 'users') ? 'active' : '' ?>">
-          <i class="fas fa-user-shield"></i>
-          <span>Manajemen User</span>
+        <a href="<?= site_url('booking/manage') ?>" class="sidebar-item <?= ($uri1 == 'booking') ? 'active' : '' ?>">
+          <i class="fas fa-calendar-check"></i>
+          <span>Booking Online</span>
         </a>
       </div>
     <?php endif; ?>
