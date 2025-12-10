@@ -19,6 +19,8 @@
                     <input type="hidden" name="phone" value="<?= $phone ?>">
                     <input type="hidden" name="full_name" value="<?= $full_name ?>">
                     <input type="hidden" name="console_id" value="<?= $console['id'] ?>">
+                    <input type="hidden" name="booking_date" value="<?= date('Y-m-d') ?>">
+                    <input type="hidden" name="booking_start_time" value="<?= date('H:i') ?>">
 
                     <div class="card bg-light mb-4" style="border: none;">
                         <div class="card-body p-3">
@@ -31,18 +33,6 @@
                                 <div class="col-6"><strong>Rp <?= number_format($console['price_per_hour'], 0, ',', '.') ?></strong></div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Tanggal <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control form-control-lg" id="booking_date" 
-                               name="booking_date" min="<?= date('Y-m-d') ?>" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Jam Mulai <span class="text-danger">*</span></label>
-                        <input type="time" class="form-control form-control-lg" id="booking_start_time" 
-                               name="booking_start_time" required>
                     </div>
 
                     <div class="mb-4">
