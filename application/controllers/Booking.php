@@ -161,11 +161,16 @@ class Booking extends CI_Controller {
         
         if ($this->db->insert('bookings', $booking_data)) {
             $booking_id = $this->db->insert_id();
-            $this->session->set_flashdata('success', 'Booking berhasil dibuat! Silakan tunggu persetujuan kasir.');
-            redirect('booking/booking_status/' . $booking_id);
+            echo json_encode([
+                'success' => true,
+                'message' => 'Booking berhasil dibuat! Silakan tunggu persetujuan kasir.',
+                'booking_id' => $booking_id
+            ]);
         } else {
-            $this->session->set_flashdata('error', 'Gagal membuat booking');
-            redirect('booking');
+            echo json_encode([
+                'success' => false,
+                'message' => 'Gagal membuat booking'
+            ]);
         }
     }
 

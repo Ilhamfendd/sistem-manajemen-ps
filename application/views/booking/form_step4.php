@@ -111,7 +111,28 @@ document.getElementById('step4Form').addEventListener('submit', function(e) {
     }
     
     errorDiv.classList.add('d-none');
-    this.submit();
+    
+    // Submit via AJAX untuk catch JSON response
+    const formData = new FormData(this);
+    fetch('<?= site_url('booking/store') ?>', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            // Redirect ke status page
+            window.location.href = '<?= site_url('booking/booking_status') ?>/' + data.booking_id;
+        } else {
+            errorDiv.textContent = data.message;
+            errorDiv.classList.remove('d-none');
+        }
+    })
+    .catch(e => {
+        errorDiv.textContent = 'Terjadi kesalahan. Silakan coba lagi.';
+        errorDiv.classList.remove('d-none');
+    });
+});
 });
 </script>
 
