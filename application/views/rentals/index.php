@@ -53,6 +53,95 @@
         </div>
     <?php endif; ?>
 
+    <!-- BOOKING PENDING SECTION -->
+    <?php if (!empty($pending_bookings)): ?>
+    <div class="mb-5">
+        <div class="d-flex align-items-center mb-3">
+            <h4 class="mb-0"><i class="fas fa-hourglass-half text-warning"></i> Booking Menunggu Persetujuan</h4>
+            <span class="badge bg-warning ms-2"><?= count($pending_bookings) ?></span>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Pelanggan</th>
+                        <th>No HP</th>
+                        <th>Unit PS</th>
+                        <th>Durasi</th>
+                        <th>Total</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($pending_bookings as $b): ?>
+                    <tr>
+                        <td><strong>#<?= $b['id'] ?></strong></td>
+                        <td><?= $b['full_name'] ?></td>
+                        <td><?= $b['phone'] ?></td>
+                        <td><?= $b['console_name'] ?> (<?= $b['console_type'] ?>)</td>
+                        <td><?= $b['duration_hours'] ?> jam</td>
+                        <td><strong>Rp <?= number_format($b['estimated_cost']) ?></strong></td>
+                        <td>
+                            <button class="btn btn-sm btn-success" onclick="approveBooking(<?= $b['id'] ?>)">
+                                <i class="fas fa-check"></i> Setuju
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="rejectBooking(<?= $b['id'] ?>)">
+                                <i class="fas fa-times"></i> Tolak
+                            </button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- BOOKING APPROVED SECTION -->
+    <?php if (!empty($approved_bookings)): ?>
+    <div class="mb-5">
+        <div class="d-flex align-items-center mb-3">
+            <h4 class="mb-0"><i class="fas fa-check text-info"></i> Booking Disetujui - Tunggu Pelanggan</h4>
+            <span class="badge bg-info ms-2"><?= count($approved_bookings) ?></span>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Pelanggan</th>
+                        <th>No HP</th>
+                        <th>Unit PS</th>
+                        <th>Durasi</th>
+                        <th>Total</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($approved_bookings as $b): ?>
+                    <tr class="table-info">
+                        <td><strong>#<?= $b['id'] ?></strong></td>
+                        <td><?= $b['full_name'] ?></td>
+                        <td><?= $b['phone'] ?></td>
+                        <td><?= $b['console_name'] ?> (<?= $b['console_type'] ?>)</td>
+                        <td><?= $b['duration_hours'] ?> jam</td>
+                        <td><strong>Rp <?= number_format($b['estimated_cost']) ?></strong></td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="customerArrived(<?= $b['id'] ?>)">
+                                <i class="fas fa-user-check"></i> Pelanggan Datang
+                            </button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- ONGOING RENTALS SECTION -->
     <div class="mb-5">
         <div class="d-flex align-items-center mb-3">
@@ -254,6 +343,66 @@
     }
 })();
 <?php endforeach; ?>
+</script>
+
+<script>
+// Handle booking approve
+function approveBooking(bookingId) {
+    if (!confirm('Setuju booking ini?')) return;
+    
+    fetch('<?= site_url('booking/approve') ?>/' + bookingId, {
+        method: 'POST'
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(e => alert('Error: ' + e));
+}
+
+// Handle booking reject
+function rejectBooking(bookingId) {
+    if (!confirm('Tolak booking ini?')) return;
+    
+    fetch('<?= site_url('booking/reject') ?>/' + bookingId, {
+        method: 'POST'
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(e => alert('Error: ' + e));
+}
+
+// Handle customer arrived
+function customerArrived(bookingId) {
+    if (!confirm('Pelanggan telah tiba? Lanjutkan ke pembayaran?')) return;
+    
+    fetch('<?= site_url('booking/customer_arrived') ?>/' + bookingId, {
+        method: 'POST'
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            // Redirect to rental payment
+            window.location.href = '<?= site_url('rentals/initial_payment') ?>/' + data.rental_id;
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(e => alert('Error: ' + e));
+}
 </script>
 
 <?php $this->load->view('layouts/footer'); ?>

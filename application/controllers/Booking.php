@@ -127,51 +127,89 @@ class Booking extends CI_Controller {
         }
     }
 
-    public function manage() {
-        // Check if user is logged in and is kasir
+    public function approve($booking_id) {
+        // Check kasir only
         if (!$this->session->userdata('user_id') || $this->session->userdata('role') != 'kasir') {
-            $this->session->set_flashdata('error', 'Akses ditolak. Hanya kasir yang dapat mengakses halaman ini.');
-            redirect('auth/login');
+            echo json_encode(['success' => false, 'message' => 'Akses ditolak']);
+            return;
         }
         
-        $this->db->select('b.*, c.console_name, c.console_type, c.price_per_hour');
-        $this->db->from('bookings b');
-        $this->db->join('consoles c', 'c.id = b.console_id', 'left');
-        $this->db->where('b.status', 'pending');
-        $this->db->order_by('b.created_at', 'DESC');
-        $data['pending'] = $this->db->get()->result_array();
+        $booking = $this->db->where('id', $booking_id)->get('bookings')->row_array();
+        if (!$booking) {
+            echo json_encode(['success' => false, 'message' => 'Booking tidak ditemukan']);
+            return;
+        }
         
-        $this->db->select('b.*, c.console_name, c.console_type, c.price_per_hour');
-        $this->db->from('bookings b');
-        $this->db->join('consoles c', 'c.id = b.console_id', 'left');
-        $this->db->where('b.status', 'approved');
-        $this->db->order_by('b.approved_at', 'DESC');
-        $data['approved'] = $this->db->get()->result_array();
-        
-        $data['title'] = 'Kelola Booking Online';
-        $this->load->view('booking/manage', $data);
-    }
-
-    public function approve($booking_id) {
         $this->db->where('id', $booking_id);
         $this->db->update('bookings', [
             'status' => 'approved',
             'approved_at' => date('Y-m-d H:i:s')
         ]);
         
-        echo json_encode([
-            'success' => true,
-            'message' => 'Booking disetujui'
-        ]);
+        echo json_encode(['success' => true, 'message' => 'Booking disetujui']);
     }
 
     public function reject($booking_id) {
+        // Check kasir only
+        if (!$this->session->userdata('user_id') || $this->session->userdata('role') != 'kasir') {
+            echo json_encode(['success' => false, 'message' => 'Akses ditolak']);
+            return;
+        }
+        
+        $booking = $this->db->where('id', $booking_id)->get('bookings')->row_array();
+        if (!$booking) {
+            echo json_encode(['success' => false, 'message' => 'Booking tidak ditemukan']);
+            return;
+        }
+        
         $this->db->where('id', $booking_id);
-        $this->db->delete('bookings');
+        $this->db->update('bookings', ['status' => 'rejected']);
+        
+        echo json_encode(['success' => true, 'message' => 'Booking ditolak']);
+    }
+
+    public function customer_arrived($booking_id) {
+        // Check kasir only
+        if (!$this->session->userdata('user_id') || $this->session->userdata('role') != 'kasir') {
+            echo json_encode(['success' => false, 'message' => 'Akses ditolak']);
+            return;
+        }
+        
+        $booking = $this->db->where('id', $booking_id)->get('bookings')->row_array();
+        
+        if (!$booking || $booking['status'] != 'approved') {
+            echo json_encode(['success' => false, 'message' => 'Booking tidak valid']);
+            return;
+        }
+        
+        // Create rental from booking
+        $rental_data = [
+            'customer_id' => $booking['customer_id'],
+            'console_id' => $booking['console_id'],
+            'start_time' => date('Y-m-d H:i:s'),
+            'estimated_hours' => $booking['duration_hours'],
+            'estimated_cost' => $booking['estimated_cost'],
+            'status' => 'ongoing',
+            'payment_status' => 'pending',
+            'total_amount' => 0,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+        
+        $this->db->insert('rentals', $rental_data);
+        $rental_id = $this->db->insert_id();
+        
+        // Update booking status
+        $this->db->where('id', $booking_id);
+        $this->db->update('bookings', ['status' => 'completed']);
+        
+        // Update console status
+        $this->db->where('id', $booking['console_id']);
+        $this->db->update('consoles', ['status' => 'in_use']);
         
         echo json_encode([
             'success' => true,
-            'message' => 'Booking ditolak'
+            'rental_id' => $rental_id,
+            'message' => 'Pelanggan berhasil dicatat. Lanjutkan ke pembayaran.'
         ]);
     }
 

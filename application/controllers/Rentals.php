@@ -20,6 +20,22 @@ class Rentals extends MY_Controller {
         $data['ongoing'] = $this->Rental_model->get_ongoing();
         $data['finished'] = $this->Rental_model->get_finished();
 
+        // Get pending bookings
+        $this->db->select('b.*, c.console_name, c.console_type, c.price_per_hour');
+        $this->db->from('bookings b');
+        $this->db->join('consoles c', 'c.id = b.console_id', 'left');
+        $this->db->where('b.status', 'pending');
+        $this->db->order_by('b.created_at', 'DESC');
+        $data['pending_bookings'] = $this->db->get()->result_array();
+
+        // Get approved bookings
+        $this->db->select('b.*, c.console_name, c.console_type, c.price_per_hour');
+        $this->db->from('bookings b');
+        $this->db->join('consoles c', 'c.id = b.console_id', 'left');
+        $this->db->where('b.status', 'approved');
+        $this->db->order_by('b.approved_at', 'DESC');
+        $data['approved_bookings'] = $this->db->get()->result_array();
+
         $this->load->view('rentals/index', $data);
     }
 

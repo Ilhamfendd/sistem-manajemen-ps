@@ -113,10 +113,9 @@ $route['booking/booking_form'] = 'booking/booking_form';
 $route['booking/store'] = 'booking/store';
 $route['booking/booking_status/(:num)'] = 'booking/booking_status/$1';
 $route['booking/customer_bookings/(:any)'] = 'booking/customer_bookings/$1';
-$route['booking/manage'] = 'booking/manage';
 $route['booking/approve/(:num)'] = 'booking/approve/$1';
 $route['booking/reject/(:num)'] = 'booking/reject/$1';
-$route['booking/process_payment/(:num)'] = 'booking/process_payment/$1';
+$route['booking/customer_arrived/(:num)'] = 'booking/customer_arrived/$1';
 
 $route['users'] = 'users/index';
 $route['users/create'] = 'users/create';
