@@ -206,10 +206,17 @@ function updateCountdowns() {
         const now = new Date().getTime();
         const fifteenMinutes = 15 * 60 * 1000;
         const diff = (approvedAt + fifteenMinutes) - now;
+        const bookingId = element.classList[0].split('-')[1]; // Extract booking ID from class
         
         if (diff <= 0) {
             element.querySelector('.time-left').textContent = 'EXPIRED';
             element.classList.add('bg-danger');
+            
+            // Auto-cancel booking if expired
+            if (!element.dataset.cancelled) {
+                element.dataset.cancelled = 'true';
+                autoCancelBooking(bookingId);
+            }
         } else {
             const minutes = Math.floor(diff / 60000);
             const seconds = Math.floor((diff % 60000) / 1000);
