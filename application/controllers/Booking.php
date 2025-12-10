@@ -12,32 +12,77 @@ class Booking extends CI_Controller {
     }
 
     public function index() {
-        // Langsung tampilkan form booking (tidak perlu katalog unit dulu)
-        $this->db->where('status', 'available');
-        $data['consoles'] = $this->db->get('consoles')->result_array();
-        $data['phone'] = '';
-        $data['full_name'] = '';
-        $data['console_id'] = '';
-        $data['title'] = 'Form Booking';
-        $this->load->view('booking/form', $data);
+        // Step 1: Input HP
+        $data['title'] = 'Pesan Unit PS - Step 1';
+        $this->load->view('booking/form_step1', $data);
     }
 
     public function search_customer() {
         $phone = $this->input->post('phone');
+        
+        if (!$phone) {
+            echo json_encode(['success' => false, 'message' => 'Nomor HP harus diisi']);
+            return;
+        }
+        
         $customer = $this->db->where('phone', $phone)->get('customers')->row_array();
         
         if ($customer) {
+            // Customer exists - skip to step 3 (pilih unit)
             echo json_encode([
                 'success' => true,
                 'is_existing' => true,
-                'customer' => $customer
+                'customer' => $customer,
+                'next_step' => 3
             ]);
         } else {
+            // New customer - go to step 2 (input nama)
             echo json_encode([
                 'success' => true,
-                'is_existing' => false
+                'is_existing' => false,
+                'next_step' => 2
             ]);
         }
+    }
+
+    public function form_step2() {
+        // Step 2: Input Nama (hanya untuk customer baru)
+        $phone = $this->input->post('phone');
+        $data['phone'] = $phone;
+        $data['title'] = 'Pesan Unit PS - Step 2';
+        $this->load->view('booking/form_step2', $data);
+    }
+
+    public function form_step3() {
+        // Step 3: Pilih Unit PS
+        $phone = $this->input->post('phone');
+        $full_name = $this->input->post('full_name');
+        
+        $this->db->where('status', 'available');
+        $data['consoles'] = $this->db->get('consoles')->result_array();
+        $data['phone'] = $phone;
+        $data['full_name'] = $full_name;
+        $data['title'] = 'Pesan Unit PS - Step 3';
+        $this->load->view('booking/form_step3', $data);
+    }
+
+    public function form_step4() {
+        // Step 4: Pilih Durasi & Konfirmasi
+        $phone = $this->input->post('phone');
+        $full_name = $this->input->post('full_name');
+        $console_id = $this->input->post('console_id');
+        
+        if (!$console_id) {
+            redirect('booking');
+        }
+        
+        $console = $this->db->where('id', $console_id)->get('consoles')->row_array();
+        
+        $data['phone'] = $phone;
+        $data['full_name'] = $full_name;
+        $data['console'] = $console;
+        $data['title'] = 'Pesan Unit PS - Step 4';
+        $this->load->view('booking/form_step4', $data);
     }
 
     public function store() {
