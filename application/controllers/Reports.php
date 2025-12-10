@@ -22,9 +22,11 @@ class Reports extends MY_Controller {
         // Quick stats for today, month, all-time
         $today = $this->get_date_stats(date('Y-m-d'), date('Y-m-d'));
         $month = $this->get_date_stats(date('Y-m-01'), date('Y-m-t'));
-        $all_time = $this->db->select('COUNT(*) as total_rentals, SUM(total_amount) as total_revenue')
-                             ->where('status', 'finished')
-                             ->get('rentals')->row_array();
+        $all_time = $this->db->select('COUNT(DISTINCT rentals.id) as total_rentals, COALESCE(SUM(transactions.amount), 0) as total_revenue')
+                             ->from('rentals')
+                             ->join('transactions', 'transactions.rental_id = rentals.id', 'left')
+                             ->where('rentals.status', 'finished')
+                             ->get()->row_array();
 
         $data['today'] = $today;
         $data['month'] = $month;
@@ -34,10 +36,12 @@ class Reports extends MY_Controller {
         $trend = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = date('Y-m-d', strtotime("-$i days"));
-            $this->db->select('SUM(total_amount) as revenue, COUNT(*) as rentals')
-                     ->where('status', 'finished')
-                     ->where('DATE(created_at)', $date);
-            $result = $this->db->get('rentals')->row_array();
+            $this->db->select('COALESCE(SUM(transactions.amount), 0) as revenue, COUNT(DISTINCT rentals.id) as rentals')
+                     ->from('rentals')
+                     ->join('transactions', 'transactions.rental_id = rentals.id', 'left')
+                     ->where('rentals.status', 'finished')
+                     ->where('DATE(rentals.created_at)', $date);
+            $result = $this->db->get()->row_array();
             $trend[] = [
                 'date' => date('d/m', strtotime($date)),
                 'revenue' => $result['revenue'] ?? 0,
@@ -227,11 +231,14 @@ class Reports extends MY_Controller {
      * Helper method to get stats for a date range
      */
     private function get_date_stats($start, $end) {
-        $this->db->select('COUNT(*) as total_rentals, SUM(total_amount) as total_revenue, AVG(total_amount) as avg_revenue, MIN(total_amount) as min_revenue, MAX(total_amount) as max_revenue')
-                 ->where('status', 'finished')
-                 ->where('DATE(created_at) >=', $start)
-                 ->where('DATE(created_at) <=', $end);
-        return $this->db->get('rentals')->row_array();
+        // Get actual revenue received (from transactions), not total rental charges
+        $this->db->select('COUNT(DISTINCT rentals.id) as total_rentals, COALESCE(SUM(transactions.amount), 0) as total_revenue, AVG(transactions.amount) as avg_revenue, MIN(transactions.amount) as min_revenue, MAX(transactions.amount) as max_revenue')
+                 ->from('rentals')
+                 ->join('transactions', 'transactions.rental_id = rentals.id', 'left')
+                 ->where('rentals.status', 'finished')
+                 ->where('DATE(rentals.created_at) >=', $start)
+                 ->where('DATE(rentals.created_at) <=', $end);
+        return $this->db->get()->row_array();
     }
 
     /**
