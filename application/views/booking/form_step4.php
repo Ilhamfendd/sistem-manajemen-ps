@@ -86,13 +86,11 @@ document.getElementById('duration_hours').addEventListener('input', updatePrice)
 document.getElementById('step4Form').addEventListener('submit', function(e) {
     e.preventDefault();
     
-    const bookingDate = document.getElementById('booking_date').value;
-    const bookingTime = document.getElementById('booking_start_time').value;
     const duration = parseFloat(document.getElementById('duration_hours').value);
     const errorDiv = document.getElementById('error');
     
-    if (!bookingDate || !bookingTime || !duration) {
-        errorDiv.textContent = 'Semua field harus diisi';
+    if (!duration) {
+        errorDiv.textContent = 'Silakan masukkan durasi';
         errorDiv.classList.remove('d-none');
         return;
     }
