@@ -180,7 +180,10 @@ class Booking extends CI_Controller {
             
             // Set console status to 'di_pesan' (booked) to prevent double booking
             $this->db->where('id', $console_id);
-            $this->db->update('consoles', ['status' => 'di_pesan']);
+            $update_result = $this->db->update('consoles', ['status' => 'di_pesan']);
+            
+            // Debug: Log the update result
+            error_log("Console ID: $console_id, Update Result: " . ($update_result ? 'SUCCESS' : 'FAILED'));
             
             echo json_encode([
                 'success' => true,
