@@ -385,6 +385,28 @@ CREATE TABLE IF NOT EXISTS `users` (
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `created_at`) VALUES
 (1, 'Kasir', 'kasir@example.com', 'kasir', 'kasir', '2025-11-09 17:39:45'),
 (3, 'Owner', 'owner@ps.com', 'owner123', 'owner', '2025-11-30 19:17:42');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `debts`
+--
+
+CREATE TABLE IF NOT EXISTS `debts` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `customer_id` int NOT NULL,
+  `rental_id` int DEFAULT NULL,
+  `amount` bigint NOT NULL COMMENT 'Total utang',
+  `paid_amount` bigint DEFAULT 0 COMMENT 'Jumlah yang sudah dibayar',
+  `status` enum('unpaid','partial','paid') COLLATE utf8mb4_unicode_ci DEFAULT 'unpaid',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `customer_id` (`customer_id`),
+  KEY `rental_id` (`rental_id`),
+  KEY `status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
