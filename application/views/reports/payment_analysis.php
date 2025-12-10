@@ -112,7 +112,7 @@
                                     </td>
                                     <td class="text-end"><?= $payment['rental_count'] ?></td>
                                     <td class="text-end">
-                                        <strong class="text-danger">Rp <?= number_format($payment['total_amount']) ?></strong>
+                                        <strong class="text-danger">Rp <?= number_format($payment['sisa_piutang']) ?></strong>
                                     </td>
                                     <td class="text-center">
                                         <?php if ($payment['status'] === 'pending'): ?>

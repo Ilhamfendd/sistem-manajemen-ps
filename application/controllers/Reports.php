@@ -169,7 +169,7 @@ class Reports extends MY_Controller {
                  ->order_by('total_amount', 'DESC');
         $data['payment_methods'] = $this->db->get()->result_array();
 
-        $this->db->select('customers.full_name as customer_name, customers.phone as customer_phone, rentals.payment_status as status, COUNT(rentals.id) as rental_count, SUM(rentals.total_amount) as total_amount, COALESCE(SUM(transactions.amount), 0) as paid_amount')
+        $this->db->select('customers.full_name as customer_name, customers.phone as customer_phone, rentals.payment_status as status, COUNT(rentals.id) as rental_count, SUM(rentals.total_amount) as total_amount, COALESCE(SUM(transactions.amount), 0) as paid_amount, (SUM(rentals.total_amount) - COALESCE(SUM(transactions.amount), 0)) as sisa_piutang')
                  ->from('rentals')
                  ->join('customers', 'customers.id = rentals.customer_id', 'left')
                  ->join('transactions', 'transactions.rental_id = rentals.id', 'left')
@@ -177,7 +177,7 @@ class Reports extends MY_Controller {
                  ->where('DATE(rentals.created_at) >=', $start_date)
                  ->where('DATE(rentals.created_at) <=', $end_date)
                  ->group_by('rentals.customer_id')
-                 ->order_by('total_amount', 'DESC');
+                 ->order_by('sisa_piutang', 'DESC');
         $data['outstanding_payments'] = $this->db->get()->result_array();
 
         $this->load->view('reports/payment_analysis', $data);
