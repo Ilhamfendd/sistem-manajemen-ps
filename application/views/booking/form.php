@@ -152,14 +152,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Redirect ke halaman status booking
                 window.location.href = '<?= site_url('booking/booking_status') ?>/' + data.booking_id;
             } else {
-                alert('Error: ' + data.message);
+                notify.error(data.message, 'Gagal Membuat Booking');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-check"></i> Konfirmasi Booking';
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Terjadi kesalahan. Silakan coba lagi.');
+            notify.error('Terjadi kesalahan. Silakan coba lagi.', 'Kesalahan Jaringan');
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<i class="fas fa-check"></i> Konfirmasi Booking';
         });

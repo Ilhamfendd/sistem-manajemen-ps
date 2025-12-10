@@ -244,15 +244,15 @@ document.getElementById('approveForm').addEventListener('submit', function(e) {
 });
 
 function rejectBooking(bookingId) {
-    if (confirm('Yakin ingin menolak booking #' + bookingId + '?')) {
+    showConfirm('Yakin ingin menolak booking #' + bookingId + '?', 'Tolak Booking', () => {
         window.location.href = '<?= site_url('booking/reject/') ?>' + bookingId;
-    }
+    });
 }
 
 function confirmArrival(bookingId) {
-    if (confirm('Pelanggan sudah datang dan siap membayar? Ini akan membuat rental baru.')) {
+    showConfirm('Pelanggan sudah datang dan siap membayar? Ini akan membuat rental baru.', 'Konfirmasi Kedatangan', () => {
         window.location.href = '<?= site_url('booking/process_payment/') ?>' + bookingId;
-    }
+    });
 }
 </script>
 

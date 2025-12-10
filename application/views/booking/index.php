@@ -162,7 +162,7 @@ function goToBookingForm() {
     const fullName = document.getElementById('full_name').value || customerName;
     
     if (!fullName) {
-        alert('Nama harus diisi');
+        notify.warning('Nama harus diisi', 'Validasi Form');
         return;
     }
 

@@ -54,7 +54,7 @@
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <a href="<?= site_url('consoles/delete/'.$c->id) ?>" class="btn btn-danger" 
-                                    onclick="return confirm('Hapus unit #<?= $c->id ?>?')" title="Hapus">
+                                    onclick="showConfirm('Hapus unit #<?= $c->id ?>?', 'Hapus Unit', () => window.location.href=this.href); return false;" title="Hapus">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </div>

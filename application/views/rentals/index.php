@@ -277,7 +277,7 @@
                                         </a>
                                     <?php endif; ?>
                                     <a href="<?= site_url('rentals/delete/'.$r->id) ?>" class="btn btn-sm btn-danger" 
-                                        onclick="return confirm('Hapus penyewaan #<?= $r->id ?>?')" title="Hapus">
+                                        onclick="showConfirm('Hapus penyewaan #<?= $r->id ?>?', 'Hapus Penyewaan', () => window.location.href=this.href); return false;" title="Hapus">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </div>
@@ -350,61 +350,63 @@
 <script>
 // Handle booking approve
 function approveBooking(bookingId) {
-    if (!confirm('Setuju booking ini?')) return;
-    
-    fetch('<?= site_url('booking/approve') ?>/' + bookingId, {
-        method: 'POST'
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.message);
-            location.reload();
-        } else {
-            alert('Error: ' + data.message);
-        }
-    })
-    .catch(e => alert('Error: ' + e));
+    showConfirm('Setuju booking ini?', 'Setujui Booking', () => {
+        fetch('<?= site_url('booking/approve') ?>/' + bookingId, {
+            method: 'POST'
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                notify.success(data.message, 'Booking Disetujui');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                notify.error(data.message, 'Gagal Menyetujui');
+            }
+        })
+        .catch(e => notify.error('Error: ' + e, 'Kesalahan Jaringan'));
+    });
 }
 
 // Handle booking reject
 function rejectBooking(bookingId) {
-    if (!confirm('Tolak booking ini?')) return;
-    
-    fetch('<?= site_url('booking/reject') ?>/' + bookingId, {
-        method: 'POST'
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.message);
-            location.reload();
-        } else {
-            alert('Error: ' + data.message);
-        }
-    })
-    .catch(e => alert('Error: ' + e));
+    showConfirm('Tolak booking ini?', 'Tolak Booking', () => {
+        fetch('<?= site_url('booking/reject') ?>/' + bookingId, {
+            method: 'POST'
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                notify.success(data.message, 'Booking Ditolak');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                notify.error(data.message, 'Gagal Menolak');
+            }
+        })
+        .catch(e => notify.error('Error: ' + e, 'Kesalahan Jaringan'));
+    });
 }
 
 // Handle customer arrived
 function customerArrived(bookingId) {
-    if (!confirm('Pelanggan telah tiba? Lanjutkan ke pembayaran?')) return;
-    
-    fetch('<?= site_url('booking/customer_arrived') ?>/' + bookingId, {
-        method: 'POST'
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.message);
-            // Redirect to rental payment
-            window.location.href = '<?= site_url('rentals/initial_payment') ?>/' + data.rental_id;
-        } else {
-            alert('Error: ' + data.message);
-        }
-    })
-    .catch(e => alert('Error: ' + e));
+    showConfirm('Pelanggan telah tiba? Lanjutkan ke pembayaran?', 'Konfirmasi Kedatangan', () => {
+        fetch('<?= site_url('booking/customer_arrived') ?>/' + bookingId, {
+            method: 'POST'
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                notify.success(data.message, 'Lanjut ke Pembayaran');
+                setTimeout(() => {
+                    window.location.href = '<?= site_url('rentals/initial_payment') ?>/' + data.rental_id;
+                }, 1000);
+            } else {
+                notify.error(data.message, 'Gagal Melanjutkan');
+            }
+        })
+        .catch(e => notify.error('Error: ' + e, 'Kesalahan Jaringan'));
+    });
 }
+
 
 // Timer countdown untuk approved bookings
 // First, calibrate client time dengan server time
