@@ -15,8 +15,8 @@
                         <div class="notification notification-warning notification-flash" style="display: flex; margin-bottom: 1.5rem;">
                             <div class="notification-icon"><i class="fas fa-exclamation-triangle"></i></div>
                             <div class="notification-content">
-                                <p class="notification-title" style="margin-bottom: 0.5rem; font-weight: 600;">Pembayaran Tambahan Diperlukan</p>
-                                <p class="notification-message" style="margin-bottom: 0.5rem;">Durasi penyewaan melebihi estimasi awal. Diperlukan pembayaran tambahan sebesar:</p>
+                                <p class="notification-title" style="margin-bottom: 0.5rem; font-weight: 600;">Sisa Pembayaran</p>
+                                <p class="notification-message" style="margin-bottom: 0.5rem;">Pelanggan belum melunasi pembayaran penuh. Sisa yang harus dibayar:</p>
                                 <p style="font-size: 1.3rem; font-weight: bold; color: #ff9800; margin-top: 0.5rem; margin-bottom: 0;">Rp <?php echo number_format($difference, 0, ',', '.'); ?></p>
                             </div>
                         </div>
@@ -64,7 +64,7 @@
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <button type="button" class="btn btn-secondary" onclick="window.location.href='<?php echo base_url('rentals/mark_debt/' . $rental['id']); ?>'">Batal</button>
                                 <button type="submit" class="btn btn-warning">
-                                    <i class="fas fa-check-circle"></i> Bayar Tambahan
+                                    <i class="fas fa-check-circle"></i> Selesaikan Pembayaran
                                 </button>
                             </div>
                         </form>
