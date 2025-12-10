@@ -141,21 +141,35 @@ class Reports extends MY_Controller {
         $data['start_date'] = $start_date;
         $data['end_date'] = $end_date;
 
-        // Get payment status breakdown and restructure it
-        $this->db->select('payment_status, COUNT(*) as count, SUM(total_amount) as total')
-                 ->where('status', 'finished')
-                 ->where('DATE(created_at) >=', $start_date)
-                 ->where('DATE(created_at) <=', $end_date)
-                 ->group_by('payment_status')
-                 ->order_by('count', 'DESC');
-        $payment_breakdown = $this->db->get('rentals')->result_array();
+        // Get payment status breakdown with accurate payment amounts
+        $this->db->select('rentals.payment_status, COUNT(rentals.id) as count, SUM(rentals.total_amount) as total_rental, COALESCE(SUM(transactions.amount), 0) as total_paid')
+                 ->from('rentals')
+                 ->join('transactions', 'transactions.rental_id = rentals.id', 'left')
+                 ->where('rentals.status', 'finished')
+                 ->where('DATE(rentals.created_at) >=', $start_date)
+                 ->where('DATE(rentals.created_at) <=', $end_date)
+                 ->group_by('rentals.id')
+                 ->order_by('rentals.payment_status');
+        $temp_breakdown = $this->db->get()->result_array();
         
-        // Convert to associative array by payment_status
+        // Restructure by payment_status with accurate amounts
         $payment_status = ['paid' => ['count' => 0, 'total' => 0], 'partial' => ['count' => 0, 'total' => 0], 'pending' => ['count' => 0, 'total' => 0]];
-        foreach ($payment_breakdown as $row) {
+        foreach ($temp_breakdown as $row) {
             $status = $row['payment_status'] ?? 'pending';
             if (isset($payment_status[$status])) {
-                $payment_status[$status] = ['count' => $row['count'], 'total' => $row['total']];
+                // For 'paid': show total paid amount
+                // For 'partial': show remaining amount (total - paid)
+                // For 'pending': show total amount (nothing paid)
+                if ($status === 'paid') {
+                    $amount = $row['total_paid'];
+                } elseif ($status === 'partial') {
+                    $amount = ($row['total_rental'] - $row['total_paid']);
+                } else {
+                    $amount = $row['total_rental'];
+                }
+                
+                $payment_status[$status]['count'] += 1;
+                $payment_status[$status]['total'] += $amount;
             }
         }
         $data['payment_status'] = $payment_status;
