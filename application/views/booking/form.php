@@ -9,24 +9,20 @@
                 </div>
                 <div class="card-body p-4">
                     <form method="POST" action="<?= site_url('booking/store') ?>" id="bookingForm">
-                        <!-- Customer Info (Read-only) -->
+                        <!-- Customer Info -->
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label fw-bold">Nama Pelanggan</label>
-                                    <div class="form-control-plaintext" style="padding: 0.375rem 0;">
-                                        <strong><?= $full_name ?></strong>
-                                    </div>
-                                    <input type="hidden" name="full_name" value="<?= $full_name ?>">
+                                    <label class="form-label fw-bold">Nama Pelanggan <span class="text-danger">*</span></label>
+                                    <input type="text" name="full_name" class="form-control" placeholder="Masukkan nama lengkap" required value="<?= $full_name ?>">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label fw-bold">Nomor HP</label>
-                                    <div class="form-control-plaintext" style="padding: 0.375rem 0;">
-                                        <strong><?= $phone ?></strong>
-                                    </div>
-                                    <input type="hidden" name="phone" value="<?= $phone ?>">
+                                    <label class="form-label fw-bold">Nomor HP <span class="text-danger">*</span></label>
+                                    <input type="tel" name="phone" class="form-control" placeholder="08xxxxxxxxx" required value="<?= $phone ?>">
+                                    <small class="text-muted">Format: 08xxxxxxxxx</small>
+                                </div>
                                 </div>
                             </div>
                         </div>
@@ -102,7 +98,7 @@
                             <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
                                 <i class="fas fa-check"></i> Konfirmasi Booking
                             </button>
-                            <a href="<?= site_url('booking') ?>" class="btn btn-outline-secondary btn-lg">
+                            <a href="<?= site_url('home') ?>" class="btn btn-outline-secondary btn-lg">
                                 <i class="fas fa-arrow-left"></i> Kembali
                             </a>
                         </div>

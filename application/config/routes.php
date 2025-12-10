@@ -109,7 +109,6 @@ $route['debts/customer_detail/(:num)'] = 'debts/customer_detail/$1';
 
 $route['booking'] = 'booking/index';
 $route['booking/search_customer'] = 'booking/search_customer';
-$route['booking/booking_form'] = 'booking/booking_form';
 $route['booking/store'] = 'booking/store';
 $route['booking/booking_status/(:num)'] = 'booking/booking_status/$1';
 $route['booking/customer_bookings/(:any)'] = 'booking/customer_bookings/$1';

@@ -12,10 +12,14 @@ class Booking extends CI_Controller {
     }
 
     public function index() {
+        // Langsung tampilkan form booking (tidak perlu katalog unit dulu)
         $this->db->where('status', 'available');
         $data['consoles'] = $this->db->get('consoles')->result_array();
-        $data['title'] = 'Pesan Unit PS';
-        $this->load->view('booking/index', $data);
+        $data['phone'] = '';
+        $data['full_name'] = '';
+        $data['console_id'] = '';
+        $data['title'] = 'Form Booking';
+        $this->load->view('booking/form', $data);
     }
 
     public function search_customer() {
@@ -34,23 +38,6 @@ class Booking extends CI_Controller {
                 'is_existing' => false
             ]);
         }
-    }
-
-    public function booking_form() {
-        $console_id = $this->input->post('console_id');
-        $phone = $this->input->post('phone');
-        $full_name = $this->input->post('full_name');
-        
-        // Get all available consoles for selection
-        $this->db->where('status', 'available');
-        $data['consoles'] = $this->db->get('consoles')->result_array();
-        
-        $data['phone'] = $phone;
-        $data['full_name'] = $full_name;
-        $data['console_id'] = $console_id;
-        $data['title'] = 'Form Booking';
-        
-        $this->load->view('booking/form', $data);
     }
 
     public function store() {
@@ -114,16 +101,11 @@ class Booking extends CI_Controller {
         
         if ($this->db->insert('bookings', $booking_data)) {
             $booking_id = $this->db->insert_id();
-            echo json_encode([
-                'success' => true,
-                'booking_id' => $booking_id,
-                'message' => 'Booking berhasil dibuat!'
-            ]);
+            $this->session->set_flashdata('success', 'Booking berhasil dibuat! Silakan tunggu persetujuan kasir.');
+            redirect('booking/booking_status/' . $booking_id);
         } else {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Gagal membuat booking'
-            ]);
+            $this->session->set_flashdata('error', 'Gagal membuat booking');
+            redirect('booking');
         }
     }
 
