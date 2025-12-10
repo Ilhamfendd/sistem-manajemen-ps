@@ -49,7 +49,7 @@ class Consoles extends MY_Controller {
             'console_name' => $this->input->post('console_name', TRUE),
             'console_type' => $this->input->post('console_type', TRUE),
             'price_per_hour' => $this->input->post('price_per_hour', TRUE),
-            'status' => 'available',
+            'status' => $this->input->post('status', TRUE),
             'note' => $this->input->post('note', TRUE)
         ];
 
