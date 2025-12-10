@@ -99,8 +99,8 @@
 
                         <!-- Buttons -->
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-check"></i> Lanjut Pembayaran
+                            <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                <i class="fas fa-check"></i> Konfirmasi Booking
                             </button>
                             <a href="<?= site_url('booking') ?>" class="btn btn-outline-secondary btn-lg">
                                 <i class="fas fa-arrow-left"></i> Kembali
@@ -135,6 +135,39 @@ document.addEventListener('DOMContentLoaded', function() {
     updatePrice();
     document.querySelector('select[name="console_id"]').addEventListener('change', updatePrice);
     document.querySelector('input[name="duration_hours"]').addEventListener('change', updatePrice);
+    
+    // Handle form submission
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+        
+        const formData = new FormData(this);
+        
+        fetch('<?= site_url('booking/store') ?>', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Redirect ke halaman status booking
+                window.location.href = '<?= site_url('booking/booking_status') ?>/' + data.booking_id;
+            } else {
+                alert('Error: ' + data.message);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> Konfirmasi Booking';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan. Silakan coba lagi.');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> Konfirmasi Booking';
+        });
+    });
 });
 </script>
 
