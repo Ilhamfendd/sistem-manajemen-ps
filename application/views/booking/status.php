@@ -95,26 +95,6 @@
                         </div>
                     </div>
 
-                    <!-- Instructions -->
-                    <div class="alert alert-info mb-4" role="alert">
-                        <h6 class="alert-heading"><i class="fas fa-info-circle"></i> Instruksi Penting:</h6>
-                        <ul class="mb-0 small">
-                            <?php if($booking['status'] == 'pending'): ?>
-                                <li>Tunggu kasir mengkonfirmasi booking Anda</li>
-                                <li>Anda akan menerima SMS/telepon dari kasir</li>
-                                <li>Jika disetujui, datang segera ke lokasi</li>
-                            <?php elseif($booking['status'] == 'approved'): ?>
-                                <li><strong>🔥 Booking Anda DISETUJUI! Segera datang ke lokasi!</strong></li>
-                                <li>Anda memiliki waktu 15 menit untuk tiba</li>
-                                <li>Siapkan uang untuk pembayaran sejumlah: <strong>Rp <?= number_format($booking['estimated_cost']) ?></strong></li>
-                                <li>Jika tidak datang dalam 15 menit, booking akan dibatalkan</li>
-                            <?php elseif($booking['status'] == 'waiting_customer'): ?>
-                                <li>Kasir telah siap menunggu Anda</li>
-                                <li>Silakan datang dan lakukan pembayaran</li>
-                            <?php endif; ?>
-                        </ul>
-                    </div>
-
                     <div class="d-grid gap-2">
                         <a href="<?= site_url('booking') ?>" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left"></i> Kembali ke Katalog
