@@ -37,11 +37,6 @@ $uri1 = $this->uri->segment(1);
           <i class="fas fa-list"></i>
           <span>Daftar Hutang</span>
         </a>
-
-        <a href="<?= site_url('booking/manage') ?>" class="sidebar-item <?= ($uri1 == 'booking') ? 'active' : '' ?>">
-          <i class="fas fa-calendar-check"></i>
-          <span>Booking Online</span>
-        </a>
       </div>
     <?php endif; ?>
 
