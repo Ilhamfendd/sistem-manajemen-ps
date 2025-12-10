@@ -72,10 +72,12 @@ function updatePrice() {
     const duration = parseFloat(document.getElementById('duration_hours').value) || 1;
     const total = pricePerHour * duration;
     
+    const formattedPrice = pricePerHour.toLocaleString('id-ID');
+    const formattedTotal = total.toLocaleString('id-ID');
+    
     document.getElementById('calculation').textContent = 
-        duration + ' jam × Rp ' + pricePerHour.toLocaleString('id-ID', {style: 'currency', currency: 'IDR'}).replace('IDR ', '');
-    document.getElementById('totalPrice').textContent = 
-        'Rp ' + total.toLocaleString('id-ID', {style: 'currency', currency: 'IDR'}).replace('IDR ', '');
+        duration + ' jam × Rp ' + formattedPrice;
+    document.getElementById('totalPrice').textContent = formattedTotal;
 }
 
 document.getElementById('duration_hours').addEventListener('change', updatePrice);
