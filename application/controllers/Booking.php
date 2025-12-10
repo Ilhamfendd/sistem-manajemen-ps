@@ -156,7 +156,8 @@ class Booking extends CI_Controller {
 
     public function approve($booking_id) {
         // Check kasir only
-        if (!$this->session->userdata('user_id') || $this->session->userdata('role') != 'kasir') {
+        $user = $this->session->userdata('user');
+        if (!$user || $user['role'] != 'kasir') {
             echo json_encode(['success' => false, 'message' => 'Akses ditolak']);
             return;
         }
@@ -178,7 +179,8 @@ class Booking extends CI_Controller {
 
     public function reject($booking_id) {
         // Check kasir only
-        if (!$this->session->userdata('user_id') || $this->session->userdata('role') != 'kasir') {
+        $user = $this->session->userdata('user');
+        if (!$user || $user['role'] != 'kasir') {
             echo json_encode(['success' => false, 'message' => 'Akses ditolak']);
             return;
         }
@@ -197,7 +199,8 @@ class Booking extends CI_Controller {
 
     public function customer_arrived($booking_id) {
         // Check kasir only
-        if (!$this->session->userdata('user_id') || $this->session->userdata('role') != 'kasir') {
+        $user = $this->session->userdata('user');
+        if (!$user || $user['role'] != 'kasir') {
             echo json_encode(['success' => false, 'message' => 'Akses ditolak']);
             return;
         }
