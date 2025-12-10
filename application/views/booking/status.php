@@ -61,13 +61,14 @@
 
                     <!-- Timer (if approved) -->
                     <?php if($booking['status'] == 'approved' && $remaining_time !== null): ?>
-                    <div class="alert alert-danger mb-4" role="alert">
-                        <div class="text-center">
-                            <h6 class="text-danger mb-2">⏰ WAKTU UNTUK TIBA KE LOKASI</h6>
-                            <h2 class="text-danger fw-bold" id="countdown">
+                    <div class="notification notification-error notification-flash" style="display: flex;">
+                        <div class="notification-icon"><i class="fas fa-clock"></i></div>
+                        <div class="notification-content">
+                            <p class="notification-title">⏰ WAKTU UNTUK TIBA KE LOKASI</p>
+                            <h2 class="text-danger fw-bold" id="countdown" style="margin: 8px 0;">
                                 <span id="minutes">--</span>:<span id="seconds">--</span>
                             </h2>
-                            <p class="text-muted small">Datang dalam waktu ini atau booking otomatis dibatalkan</p>
+                            <p class="notification-message">Datang dalam waktu ini atau booking otomatis dibatalkan</p>
                         </div>
                     </div>
                     <?php endif; ?>

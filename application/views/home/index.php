@@ -872,8 +872,11 @@
                     <?php endforeach; ?>
                 <?php else: ?>
                     <div class="col-12">
-                        <div class="alert alert-warning" role="alert">
-                            <i class="fas fa-exclamation-triangle"></i> Semua unit sedang dipakai. Silakan coba lagi nanti.
+                        <div class="notification notification-warning notification-flash" style="display: flex;">
+                            <div class="notification-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                            <div class="notification-content">
+                                <p class="notification-message">Semua unit sedang dipakai. Silakan coba lagi nanti.</p>
+                            </div>
                         </div>
                     </div>
                 <?php endif; ?>

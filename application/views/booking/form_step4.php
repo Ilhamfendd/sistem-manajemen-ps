@@ -44,9 +44,12 @@
                         </div>
                     </div>
 
-                    <div class="alert alert-info mb-4">
-                        <small>Total: <span id="calculation">1 jam × Rp <?= number_format($console['price_per_hour'], 0, ',', '.') ?></span></small>
-                        <div><strong>Rp <span id="totalPrice"><?= number_format($console['price_per_hour'], 0, ',', '.') ?></span></strong></div>
+                    <div class="notification notification-info notification-flash" style="display: flex;">
+                        <div class="notification-icon"><i class="fas fa-info-circle"></i></div>
+                        <div class="notification-content">
+                            <p class="notification-message mb-1">Total: <span id="calculation">1 jam × Rp <?= number_format($console['price_per_hour'], 0, ',', '.') ?></span></p>
+                            <p class="notification-message" style="font-size: 1.1rem; font-weight: 600;">Rp <span id="totalPrice"><?= number_format($console['price_per_hour'], 0, ',', '.') ?></span></p>
+                        </div>
                     </div>
 
                     <div id="error" class="alert alert-danger d-none" role="alert"></div>

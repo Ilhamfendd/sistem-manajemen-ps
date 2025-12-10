@@ -16,8 +16,11 @@
                 <h3 class="mb-4">Pilih Unit PS</h3>
 
                 <?php if (empty($consoles)): ?>
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle"></i> Semua unit sedang digunakan. Silakan coba lagi nanti.
+                    <div class="notification notification-warning notification-flash" style="display: flex;">
+                        <div class="notification-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="notification-content">
+                            <p class="notification-message">Semua unit sedang digunakan. Silakan coba lagi nanti.</p>
+                        </div>
                     </div>
                 <?php else: ?>
                     <form id="step3Form" method="POST" action="<?= site_url('booking/form_step4') ?>">

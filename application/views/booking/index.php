@@ -41,8 +41,11 @@
             <?php endforeach; ?>
         <?php else: ?>
             <div class="col-12">
-                <div class="alert alert-info text-center">
-                    <i class="fas fa-info-circle"></i> Tidak ada unit yang tersedia saat ini
+                <div class="notification notification-info notification-flash" style="display: flex;">
+                    <div class="notification-icon"><i class="fas fa-info-circle"></i></div>
+                    <div class="notification-content">
+                        <p class="notification-message">Tidak ada unit yang tersedia saat ini</p>
+                    </div>
                 </div>
             </div>
         <?php endif; ?>

@@ -23,10 +23,12 @@
                 </div>
                 <div class="card-body">
                     <?php if (empty($history)): ?>
-                        <div class="alert alert-info text-center py-5">
-                            <i class="fas fa-information-circle" style="font-size: 2rem;"></i>
-                            <p class="mt-3">Tidak ada riwayat perubahan harga untuk unit ini.</p>
-                            <small class="text-muted">Perubahan harga akan tercatat di sini saat Anda mengedit harga.</small>
+                        <div class="notification notification-info notification-flash" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                            <div class="notification-icon" style="font-size: 2rem;"><i class="fas fa-information-circle"></i></div>
+                            <div class="notification-content" style="text-align: center;">
+                                <p class="notification-message">Tidak ada riwayat perubahan harga untuk unit ini.</p>
+                                <small style="opacity: 0.7;">Perubahan harga akan tercatat di sini saat Anda mengedit harga.</small>
+                            </div>
                         </div>
                     <?php else: ?>
                         <div class="timeline">

@@ -14,10 +14,7 @@
     </div>
 
     <?php if ($this->session->flashdata('success')): ?>
-        <div class="alert alert-success alert-dismissible fade show mb-4">
-            <i class="fas fa-check-circle"></i> <?= $this->session->flashdata('success') ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+        <div data-flash-success="<?= htmlspecialchars($this->session->flashdata('success')) ?>" data-flash-title="Berhasil"></div>
     <?php endif; ?>
 
     <!-- Total Outstanding Card -->

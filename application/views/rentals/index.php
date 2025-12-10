@@ -49,8 +49,11 @@
         </div>
         
         <?php if (empty($pending_bookings)): ?>
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i> Tidak ada booking yang menunggu persetujuan
+            <div class="notification notification-info notification-flash" style="display: flex;">
+                <div class="notification-icon"><i class="fas fa-info-circle"></i></div>
+                <div class="notification-content">
+                    <p class="notification-message">Tidak ada booking yang menunggu persetujuan</p>
+                </div>
             </div>
         <?php else: ?>
         <div class="table-responsive">
@@ -99,8 +102,11 @@
         </div>
         
         <?php if (empty($approved_bookings)): ?>
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i> Tidak ada booking yang disetujui
+            <div class="notification notification-info notification-flash" style="display: flex;">
+                <div class="notification-icon"><i class="fas fa-info-circle"></i></div>
+                <div class="notification-content">
+                    <p class="notification-message">Tidak ada booking yang disetujui</p>
+                </div>
             </div>
         <?php else: ?>
         <div class="table-responsive">

@@ -61,10 +61,7 @@
                     </div>
                     <div class="card-body">
                         <?php if ($this->session->flashdata('success')): ?>
-                            <div class="alert alert-success alert-dismissible fade show">
-                                <?= $this->session->flashdata('success') ?>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
+                            <div data-flash-success="<?= htmlspecialchars($this->session->flashdata('success')) ?>" data-flash-title="Pesan Terkirim"></div>
                         <?php endif; ?>
 
                         <?= form_open('contact', ['method' => 'post']) ?>
