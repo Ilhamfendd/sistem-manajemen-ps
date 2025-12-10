@@ -752,6 +752,19 @@
         body.dark-mode #themeToggle {
             color: #ffc107 !important;
         }
+        
+        /* Remove underline from buttons */
+        .btn-primary-light {
+            text-decoration: none !important;
+        }
+        
+        .nav-link {
+            text-decoration: none !important;
+        }
+        
+        .nav-link:hover {
+            text-decoration: none !important;
+        }
     </style>
 </head>
 <body>
