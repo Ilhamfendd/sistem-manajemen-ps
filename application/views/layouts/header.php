@@ -23,7 +23,7 @@
     
     <div class="navbar-menu">
       <div class="navbar-nav">
-        <button id="themeToggle" class="theme-toggle" title="Toggle Dark Mode">
+        <button id="themeToggle" class="theme-toggle" title="Toggle Dark Mode" onclick="window.toggleDarkMode(event); return false;">
           <i class="fas fa-moon"></i>
         </button>
         <?php if ($this->session->userdata('user')): ?>
