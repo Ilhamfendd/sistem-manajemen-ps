@@ -87,6 +87,8 @@ document.getElementById('step4Form').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const duration = parseFloat(document.getElementById('duration_hours').value);
+    const consoleId = document.querySelector('input[name="console_id"]').value;
+    const bookingDate = document.querySelector('input[name="booking_date"]').value;
     const errorDiv = document.getElementById('error');
     
     if (!duration) {
@@ -97,6 +99,13 @@ document.getElementById('step4Form').addEventListener('submit', function(e) {
     
     if (duration < 0.5) {
         errorDiv.textContent = 'Durasi minimal 0.5 jam';
+        errorDiv.classList.remove('d-none');
+        return;
+    }
+    
+    // Check availability sebelum submit
+    if (!consoleId || !bookingDate) {
+        errorDiv.textContent = 'Data tidak lengkap';
         errorDiv.classList.remove('d-none');
         return;
     }

@@ -127,6 +127,21 @@ class Booking extends CI_Controller {
             return;
         }
         
+        // Check if console already booked for this date/time
+        // A booking conflicts if it's for same console, same date, and same/overlapping time
+        $this->db->where('console_id', $console_id);
+        $this->db->where('booking_date', $booking_date);
+        $this->db->where_in('status', ['pending', 'approved']); // Only pending/approved blocks booking
+        $existing_booking = $this->db->get('bookings')->row_array();
+        
+        if ($existing_booking) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Unit ini sudah di-booking untuk tanggal dan waktu yang sama. Pilih unit atau waktu lain.'
+            ]);
+            return;
+        }
+        
         $total_price = $console['price_per_hour'] * $duration_hours;
         
         // Create booking
