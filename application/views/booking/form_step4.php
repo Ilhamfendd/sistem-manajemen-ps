@@ -133,7 +133,6 @@ document.getElementById('step4Form').addEventListener('submit', function(e) {
         errorDiv.classList.remove('d-none');
     });
 });
-});
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
