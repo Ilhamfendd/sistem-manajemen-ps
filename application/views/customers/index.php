@@ -36,6 +36,10 @@
                         <td><?= $c->note ?></td>
                         <td>
                             <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn btn-info" title="Download QR" 
+                                        onclick="downloadCustomerQR('<?= $c->customer_id ?>')">
+                                    <i class="fas fa-qrcode"></i>
+                                </button>
                                 <a href="<?= site_url('customers/edit/'.$c->id) ?>" class="btn btn-warning" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
@@ -43,7 +47,8 @@
                                     onclick="showConfirm('Hapus pelanggan #<?= $c->id ?>?', 'Hapus Pelanggan', () => window.location.href=this.href); return false;" title="Hapus">
                                     <i class="fas fa-trash"></i>
                                 </a>
-                            </td>
+                            </div>
+                        </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -52,4 +57,14 @@
     <?php endif; ?>
 </div>
 
-<?php $this->load->view('layouts/footer'); ?>
+<script>
+function downloadCustomerQR(customerId) {
+    const link = document.createElement('a');
+    link.href = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(customerId);
+    link.download = `QR-${customerId}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+</script>
+

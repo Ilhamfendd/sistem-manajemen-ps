@@ -37,10 +37,10 @@ class Customers extends MY_Controller {
             'note' => $this->input->post('note', TRUE),
         ];
 
-        $this->Customer_model->insert($payload);
-        $this->session->set_flashdata('success', 'Pelanggan berhasil ditambahkan.');
-
-        redirect('customers');
+        $customer_id = $this->Customer_model->insert($payload);
+        
+        // Redirect ke halaman show QR code
+        redirect('customers/show_qr/' . $customer_id);
     }
 
     public function edit($id) {
@@ -96,4 +96,14 @@ class Customers extends MY_Controller {
             ]);
         }
     }
-}
+
+    /**
+     * Show QR code after customer registration
+     */
+    public function show_qr($id) {
+        $data['customer'] = $this->Customer_model->find($id);
+        if (!$data['customer']) show_404();
+
+        $data['title'] = 'ID Pelanggan - ' . $data['customer']->full_name;
+        $this->load->view('customers/show_qr', $data);
+    }

@@ -190,6 +190,10 @@ generateBtn.addEventListener('click', function() {
             if (data.success) {
                 newCustomerId.value = data.customer_id;
                 continueNewBtn.disabled = false;
+                
+                // Show QR code modal
+                showQRModal(data.customer_id);
+                
                 if (typeof showNotification !== 'undefined') {
                     showNotification('ID berhasil di-generate: ' + data.customer_id, 'success');
                 }
@@ -207,6 +211,57 @@ generateBtn.addEventListener('click', function() {
             generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate';
         });
 });
+
+// Function untuk show QR modal dengan download
+function showQRModal(customerId) {
+    const html = `
+        <div class="modal fade" id="qrModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header bg-success text-white border-0">
+                        <h5 class="modal-title"><i class="fas fa-qrcode"></i> ID Pelanggan Anda</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center p-4">
+                        <h4 class="mb-3 text-primary"><strong>${customerId}</strong></h4>
+                        <img id="qrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(customerId)}" 
+                             alt="QR Code" class="img-fluid mb-3" style="max-width: 250px;">
+                        <p class="text-muted">Simpan atau download untuk booking berikutnya</p>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-primary" onclick="downloadQR('${customerId}')">
+                            <i class="fas fa-download"></i> Download QR
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const qrContainer = document.createElement('div');
+    qrContainer.innerHTML = html;
+    document.body.appendChild(qrContainer);
+    
+    const modal = new bootstrap.Modal(document.getElementById('qrModal'));
+    modal.show();
+    
+    // Remove modal after hidden
+    document.getElementById('qrModal').addEventListener('hidden.bs.modal', function() {
+        qrContainer.remove();
+    });
+}
+
+// Function download QR code
+function downloadQR(customerId) {
+    const link = document.createElement('a');
+    link.href = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(customerId);
+    link.download = `QR-${customerId}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 
 continueNewBtn.addEventListener('click', function() {
     if (!fullName.value.trim() || !newCustomerId.value.trim()) {
