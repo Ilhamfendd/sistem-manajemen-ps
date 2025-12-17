@@ -38,7 +38,7 @@ class Rentals extends MY_Controller {
         // Get approved bookings
         $this->db->select('b.id, b.customer_id, b.console_id, b.duration_hours, b.estimated_cost, b.approved_at, b.expires_at, 
                           COALESCE(cu.full_name, b.full_name) as full_name, 
-                          cu.customer_id, c.console_name, c.console_type, c.price_per_hour');
+                          c.console_name, c.console_type, c.price_per_hour');
         $this->db->from('bookings b');
         $this->db->join('customers cu', 'cu.id = b.customer_id', 'left');
         $this->db->join('consoles c', 'c.id = b.console_id', 'left');
@@ -46,17 +46,10 @@ class Rentals extends MY_Controller {
         $this->db->order_by('b.approved_at', 'DESC');
         $approved_bookings = $this->db->get()->result_array();
         
-        // Debug log
-        log_message('info', "=== APPROVED BOOKINGS DEBUG ===");
-        log_message('info', "Total approved bookings: " . count($approved_bookings));
-        
         // Fix missing expires_at (set ke 15 menit dari approved_at jika NULL)
         foreach ($approved_bookings as &$booking) {
-            log_message('info', "Booking ID " . $booking['id'] . ": expires_at=" . ($booking['expires_at'] ?? 'NULL') . ", approved_at=" . $booking['approved_at']);
-            
             if (empty($booking['expires_at']) && !empty($booking['approved_at'])) {
                 $booking['expires_at'] = date('Y-m-d H:i:s', strtotime($booking['approved_at'] . ' +15 minutes'));
-                log_message('info', "  -> Auto-set expires_at to: " . $booking['expires_at']);
             }
         }
         
