@@ -386,4 +386,39 @@ class Booking extends CI_Controller {
                 'message' => 'Tidak dapat generate ID (mungkin sudah 9999 pelanggan tahun ini)'
             ]);
         }
+    }
+
+    /**
+     * Create new customer from booking form
+     */
+    public function create_new_customer() {
+        $this->output->set_content_type('application/json');
+        
+        $full_name = $this->input->post('full_name');
+        $customer_id = $this->input->post('customer_id');
+        
+        if (!$full_name || !$customer_id) {
+            echo json_encode(['success' => false, 'message' => 'Data tidak lengkap']);
+            return;
+        }
+        
+        // Check if customer_id already exists
+        $exists = $this->db->get_where('customers', ['customer_id' => $customer_id])->num_rows();
+        if ($exists > 0) {
+            echo json_encode(['success' => false, 'message' => 'ID Pelanggan sudah terdaftar']);
+            return;
+        }
+        
+        // Create new customer
+        $data = [
+            'full_name' => $full_name,
+            'customer_id' => $customer_id,
+            'note' => 'Created from booking'
+        ];
+        
+        if ($this->Customer_model->insert($data)) {
+            echo json_encode(['success' => true, 'customer_id' => $customer_id]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Gagal membuat pelanggan']);
+        }
     }}

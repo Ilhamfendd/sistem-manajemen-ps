@@ -214,24 +214,46 @@ continueNewBtn.addEventListener('click', function() {
         return;
     }
     
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '<?= site_url('booking/form_step2') ?>';
+    // Save new customer and continue to step 3 (pilih unit)
+    continueNewBtn.disabled = true;
+    continueNewBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
     
-    const nameInput = document.createElement('input');
-    nameInput.type = 'hidden';
-    nameInput.name = 'full_name';
-    nameInput.value = fullName.value.trim();
-    form.appendChild(nameInput);
-    
-    const idInput = document.createElement('input');
-    idInput.type = 'hidden';
-    idInput.name = 'customer_id';
-    idInput.value = newCustomerId.value.trim();
-    form.appendChild(idInput);
-    
-    document.body.appendChild(form);
-    form.submit();
+    fetch('<?= site_url('booking/create_new_customer') ?>', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'full_name=' + encodeURIComponent(fullName.value.trim()) + 
+              '&customer_id=' + encodeURIComponent(newCustomerId.value.trim())
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            // Go to step 3 directly
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '<?= site_url('booking/form_step3') ?>';
+            
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'customer_id';
+            idInput.value = newCustomerId.value.trim();
+            form.appendChild(idInput);
+            
+            document.body.appendChild(form);
+            form.submit();
+        } else {
+            newError.textContent = data.message || 'Gagal membuat pelanggan';
+            newError.classList.remove('d-none');
+            continueNewBtn.disabled = false;
+            continueNewBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Lanjut Booking';
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        newError.textContent = 'Terjadi kesalahan';
+        newError.classList.remove('d-none');
+        continueNewBtn.disabled = false;
+        continueNewBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Lanjut Booking';
+    });
 });
 
 customerId.addEventListener('keypress', function(e) {
