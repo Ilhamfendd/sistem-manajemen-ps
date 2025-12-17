@@ -57,7 +57,7 @@ class Rentals extends MY_Controller {
             $expiry_time = date('Y-m-d H:i:s', strtotime('-15 minutes'));
             
             // Find all approved bookings that haven't had customer arrival in 15 minutes
-            $this->db->select('b.id, b.console_id, b.full_name, b.phone');
+            $this->db->select('b.id, b.console_id, b.full_name');
             $this->db->from('bookings b');
             $this->db->where('b.status', 'approved');
             $this->db->where('b.approved_at <', $expiry_time);
