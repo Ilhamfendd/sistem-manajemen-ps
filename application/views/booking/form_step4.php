@@ -91,11 +91,12 @@ document.getElementById('step4Form').addEventListener('submit', function(e) {
     
     const duration = parseFloat(document.getElementById('duration_hours').value);
     const consoleId = document.querySelector('input[name="console_id"]').value;
-    const bookingDate = document.querySelector('input[name="booking_date"]').value;
+    const phone = document.querySelector('input[name="phone"]').value;
+    const fullName = document.querySelector('input[name="full_name"]').value;
     const errorDiv = document.getElementById('error');
     
-    if (!duration) {
-        errorDiv.textContent = 'Silakan masukkan durasi';
+    if (!duration || duration <= 0) {
+        errorDiv.textContent = 'Silakan masukkan durasi dengan benar';
         errorDiv.classList.remove('d-none');
         return;
     }
@@ -106,9 +107,9 @@ document.getElementById('step4Form').addEventListener('submit', function(e) {
         return;
     }
     
-    // Check availability sebelum submit
-    if (!consoleId || !bookingDate) {
-        errorDiv.textContent = 'Data tidak lengkap';
+    // Validate all required fields
+    if (!consoleId) {
+        errorDiv.textContent = 'Unit tidak valid';
         errorDiv.classList.remove('d-none');
         return;
     }
@@ -132,6 +133,7 @@ document.getElementById('step4Form').addEventListener('submit', function(e) {
         }
     })
     .catch(e => {
+        console.error(e);
         errorDiv.textContent = 'Terjadi kesalahan. Silakan coba lagi.';
         errorDiv.classList.remove('d-none');
     });
