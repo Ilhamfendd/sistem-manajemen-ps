@@ -207,6 +207,7 @@
                         <td>
                             <div class="timer" id="timer_<?= $b['id'] ?>" data-expires="<?= $b['expires_at'] ?>" title="expires_at: <?= $b['expires_at'] ?>">
                                 <small class="text-danger fw-bold">--:--</small>
+                                <br><small class="text-muted" style="font-size: 0.7rem;"><?= $b['expires_at'] ?? 'NO VALUE' ?></small>
                             </div>
                         </td>
                         <td>
