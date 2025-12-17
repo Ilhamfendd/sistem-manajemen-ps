@@ -1,4 +1,4 @@
-Struk pembayaran/invoice -Struk pembayaran/invoice -<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
