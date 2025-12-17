@@ -404,7 +404,10 @@
 function approveBooking(bookingId) {
     showConfirm('Setuju booking ini?', 'Setujui Booking', () => {
         fetch('<?= site_url('booking/approve') ?>/' + bookingId, {
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
         .then(r => r.json())
         .then(data => {
@@ -412,10 +415,13 @@ function approveBooking(bookingId) {
                 notify.success(data.message, 'Booking Disetujui');
                 setTimeout(() => location.reload(), 1000);
             } else {
-                notify.error(data.message, 'Gagal Menyetujui');
+                notify.error(data.message || 'Gagal menyetujui booking', 'Gagal Menyetujui');
             }
         })
-        .catch(e => notify.error('Error: ' + e, 'Kesalahan Jaringan'));
+        .catch(e => {
+            console.error('Error:', e);
+            notify.error('Error: ' + e, 'Kesalahan Jaringan');
+        });
     });
 }
 
@@ -423,7 +429,10 @@ function approveBooking(bookingId) {
 function rejectBooking(bookingId) {
     showConfirm('Tolak booking ini?', 'Tolak Booking', () => {
         fetch('<?= site_url('booking/reject') ?>/' + bookingId, {
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
         .then(r => r.json())
         .then(data => {
@@ -431,10 +440,13 @@ function rejectBooking(bookingId) {
                 notify.success(data.message, 'Booking Ditolak');
                 setTimeout(() => location.reload(), 1000);
             } else {
-                notify.error(data.message, 'Gagal Menolak');
+                notify.error(data.message || 'Gagal menolak booking', 'Gagal Menolak');
             }
         })
-        .catch(e => notify.error('Error: ' + e, 'Kesalahan Jaringan'));
+        .catch(e => {
+            console.error('Error:', e);
+            notify.error('Error: ' + e, 'Kesalahan Jaringan');
+        });
     });
 }
 
