@@ -21,9 +21,15 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="phone" class="form-label">No. Telepon <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="phone" name="phone" 
-                                value="<?= isset($item) ? $item->phone : set_value('phone') ?>" required>
+                            <label for="customer_id" class="form-label">ID Pelanggan <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="customer_id" name="customer_id" 
+                                    value="<?= isset($item) ? $item->customer_id : set_value('customer_id') ?>" required readonly>
+                                <button class="btn btn-outline-primary" type="button" id="generateIdBtn">
+                                    <i class="fas fa-magic"></i> Generate
+                                </button>
+                            </div>
+                            <small class="text-muted d-block mt-1">Format: YYNNNN (cth: 250001, 250002)</small>
                         </div>
 
                         <div class="mb-3">
@@ -48,3 +54,21 @@
 </div>
 
 <?php $this->load->view('layouts/footer'); ?>
+<script>
+document.getElementById('generateIdBtn').addEventListener('click', function() {
+    fetch('<?= site_url("customers/generate_customer_id") ?>')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('customer_id').value = data.customer_id;
+                showNotification('ID berhasil di-generate: ' + data.customer_id, 'success');
+            } else {
+                showNotification(data.message || 'Gagal generate ID', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Terjadi kesalahan', 'error');
+        });
+});
+</script>

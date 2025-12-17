@@ -25,7 +25,7 @@ class Customers extends MY_Controller {
 
     public function store() {
         $this->form_validation->set_rules('full_name', 'Nama Lengkap', 'required');
-        $this->form_validation->set_rules('phone', 'No. Telepon', 'required');
+        $this->form_validation->set_rules('customer_id', 'ID Pelanggan', 'required|is_unique[customers.customer_id]');
 
         if ($this->form_validation->run() == FALSE) {
             return $this->create();
@@ -33,8 +33,8 @@ class Customers extends MY_Controller {
 
         $payload = [
             'full_name' => $this->input->post('full_name', TRUE),
-            'phone'     => $this->input->post('phone', TRUE),
-            'note'      => $this->input->post('note', TRUE),
+            'customer_id' => $this->input->post('customer_id', TRUE),
+            'note' => $this->input->post('note', TRUE),
         ];
 
         $this->Customer_model->insert($payload);
@@ -74,5 +74,26 @@ class Customers extends MY_Controller {
     public function delete($id) {
         $this->Customer_model->delete($id);
         redirect('customers');
+    }
+
+    /**
+     * Generate customer ID via AJAX
+     */
+    public function generate_customer_id() {
+        $this->output->set_content_type('application/json');
+        
+        $customer_id = $this->Customer_model->generate_customer_id();
+        
+        if ($customer_id) {
+            echo json_encode([
+                'success' => true,
+                'customer_id' => $customer_id
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Tidak dapat generate ID (mungkin sudah 9999 pelanggan tahun ini)'
+            ]);
+        }
     }
 }
