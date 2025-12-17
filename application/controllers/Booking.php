@@ -89,15 +89,14 @@ class Booking extends CI_Controller {
     public function store() {
         $this->load->library('form_validation');
         
-        $phone = $this->input->post('phone');
-        $full_name = $this->input->post('full_name');
+        $customer_id = $this->input->post('customer_id');
         $console_id = $this->input->post('console_id');
         $booking_date = $this->input->post('booking_date');
         $booking_start_time = $this->input->post('booking_start_time');
         $duration_hours = $this->input->post('duration_hours');
         
         // Validate input
-        if (!$phone || !$full_name || !$console_id || !$booking_date || !$booking_start_time || !$duration_hours) {
+        if (!$customer_id || !$console_id || !$booking_date || !$booking_start_time || !$duration_hours) {
             echo json_encode([
                 'success' => false,
                 'message' => 'Semua field harus diisi'
@@ -105,17 +104,14 @@ class Booking extends CI_Controller {
             return;
         }
         
-        // Check or create customer
-        $customer = $this->db->where('phone', $phone)->get('customers')->row_array();
-        if ($customer) {
-            $customer_id = $customer['id'];
-        } else {
-            $this->db->insert('customers', [
-                'full_name' => $full_name,
-                'phone' => $phone,
-                'created_at' => date('Y-m-d H:i:s')
+        // Get customer info
+        $customer = $this->db->where('customer_id', $customer_id)->get('customers')->row_array();
+        if (!$customer) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Pelanggan tidak ditemukan'
             ]);
-            $customer_id = $this->db->insert_id();
+            return;
         }
         
         // Get console price & verify exists
@@ -149,8 +145,6 @@ class Booking extends CI_Controller {
         $booking_data = [
             'customer_id' => $customer_id,
             'console_id' => $console_id,
-            'phone' => $phone,
-            'full_name' => $full_name,
             'booking_date' => $booking_date,
             'booking_start_time' => $booking_start_time,
             'duration_hours' => $duration_hours,
