@@ -673,4 +673,57 @@ class Rentals extends MY_Controller {
         $this->session->set_flashdata('success', 'Timer dimulai untuk penyewaan #' . $id);
         redirect('rentals');
     }
-}
+
+    /**
+     * AJAX endpoint - Check and auto-finish expired rentals
+     */
+    public function check_expired_and_finish() {
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+            return;
+        }
+
+        try {
+            $completed_count = 0;
+            
+            // Find all ongoing rentals with timer_started_at and check if duration expired
+            $this->db->select('r.id, r.timer_started_at, r.estimated_hours, r.console_id, r.estimated_cost, c.price_per_hour');
+            $this->db->from('rentals r');
+            $this->db->join('consoles c', 'c.id = r.console_id', 'left');
+            $this->db->where('r.status', 'ongoing');
+            $this->db->where('r.timer_started_at IS NOT NULL', NULL, FALSE);
+            $ongoing_rentals = $this->db->get()->result_array();
+            
+            foreach ($ongoing_rentals as $rental) {
+                $timer_start = new DateTime($rental['timer_started_at']);
+                $now = new DateTime();
+                $elapsed_seconds = $now->getTimestamp() - $timer_start->getTimestamp();
+                $estimated_seconds = $rental['estimated_hours'] * 3600;
+                
+                // If time expired, auto-finish
+                if ($elapsed_seconds >= $estimated_seconds) {
+                    $duration_minutes = ceil($elapsed_seconds / 60);
+                    $end_time = date('Y-m-d H:i:s');
+                    
+                    $this->db->where('id', $rental['id']);
+                    $this->db->update('rentals', [
+                        'end_time' => $end_time,
+                        'duration_minutes' => $duration_minutes,
+                        'total_amount' => $rental['estimated_cost'],
+                        'status' => 'finished'
+                    ]);
+                    
+                    $this->db->where('id', $rental['console_id']);
+                    $this->db->update('consoles', ['status' => 'available']);
+                    
+                    $completed_count++;
+                    log_message('info', "AJAX auto-finished rental: ID={$rental['id']}");
+                }
+            }
+            
+            echo json_encode(['success' => true, 'finished' => $completed_count]);
+        } catch (Exception $e) {
+            log_message('error', "Error in check_expired_and_finish: " . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }

@@ -201,12 +201,18 @@
 
                         <div class="card-footer bg-light p-2">
                             <?php if ($r->timer_started_at): ?>
-                                <a href="<?= site_url('rentals/finish/'.$r->id) ?>" class="btn btn-sm btn-success w-100" style="font-size: 0.8rem;">
-                                    <i class="fas fa-check"></i> Selesai
-                                </a>
+                                <div class="d-grid gap-2" style="grid-template-columns: 1fr 1fr;">
+                                    <button type="button" class="btn btn-sm btn-warning" id="pauseBtn-<?= $r->id ?>" 
+                                            onclick="pauseRental_<?= $r->id ?>()" style="font-size: 0.8rem;">
+                                        <i class="fas fa-pause"></i> Pause
+                                    </button>
+                                    <a href="<?= site_url('rentals/finish/'.$r->id) ?>" class="btn btn-sm btn-success" style="font-size: 0.8rem;">
+                                        <i class="fas fa-check"></i> Selesai
+                                    </a>
+                                </div>
                             <?php else: ?>
                                 <a href="<?= site_url('rentals/start_play/'.$r->id) ?>" class="btn btn-sm btn-primary w-100" style="font-size: 0.8rem;">
-                                    <i class="fas fa-play"></i> Play
+                                    <i class="fas fa-play"></i> Mulai Bermain
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -305,6 +311,10 @@
     const totalSeconds = estimatedHours * 3600;
     const timerStartedAt = '<?= $r->timer_started_at ?? '' ?>';
     
+    let isPaused = false;
+    let pausedSeconds = 0;
+    let interval = null;
+    
     function displayTime(seconds) {
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
@@ -337,17 +347,57 @@
     let remainingSeconds = calculateRemainingTime();
     durationElement.textContent = displayTime(remainingSeconds);
     
-    // If timer was already started, run countdown
-    if (timerStartedAt) {
-        const interval = setInterval(() => {
-            remainingSeconds--;
-            durationElement.textContent = displayTime(remainingSeconds);
+    // Pause button handler
+    window['pauseRental_' + rentalId] = function() {
+        if (timerStartedAt && !isPaused) {
+            isPaused = true;
+            pausedSeconds = remainingSeconds;
+            if (interval) clearInterval(interval);
             
-            if (remainingSeconds <= 0) {
-                clearInterval(interval);
-                window.location.href = "<?= site_url('rentals/finish/') ?>" + rentalId;
+            const pauseBtn = document.getElementById('pauseBtn-' + rentalId);
+            if (pauseBtn) {
+                pauseBtn.innerHTML = '<i class="fas fa-play"></i> Lanjut';
+                pauseBtn.classList.remove('btn-warning');
+                pauseBtn.classList.add('btn-info');
+            }
+        } else if (isPaused) {
+            // Resume
+            isPaused = false;
+            
+            const pauseBtn = document.getElementById('pauseBtn-' + rentalId);
+            if (pauseBtn) {
+                pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                pauseBtn.classList.remove('btn-info');
+                pauseBtn.classList.add('btn-warning');
+            }
+            
+            startCountdown();
+        }
+    };
+    
+    function startCountdown() {
+        if (interval) clearInterval(interval);
+        
+        interval = setInterval(() => {
+            if (!isPaused) {
+                remainingSeconds--;
+                durationElement.textContent = displayTime(remainingSeconds);
+                
+                if (remainingSeconds <= 0) {
+                    clearInterval(interval);
+                    window.location.href = "<?= site_url('rentals/finish/') ?>" + rentalId;
+                }
             }
         }, 1000);
+    }
+    
+    // If timer was already started, run countdown
+    if (timerStartedAt) {
+        startCountdown();
+    }
+})();
+<?php endforeach; ?>
+</script>
     }
 })();
 <?php endforeach; ?>
@@ -447,6 +497,20 @@ function updateApprovedTimers() {
 // Update timers setiap detik
 setInterval(updateApprovedTimers, 1000);
 updateApprovedTimers(); // Initial update
-</script>
 
-<?php $this->load->view('layouts/footer'); ?>
+// Periodic check untuk auto-finish expired rentals (setiap 20 detik)
+setInterval(() => {
+    fetch('<?= site_url('rentals/check_expired_and_finish') ?>', {
+        method: 'POST'
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success && data.finished > 0) {
+            // Refresh halaman jika ada rental yang selesai
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        }
+    })
+    .catch(e => console.error('Auto-finish check error:', e));
+}, 20000);
