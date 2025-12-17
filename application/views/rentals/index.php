@@ -398,10 +398,6 @@
 })();
 <?php endforeach; ?>
 </script>
-    }
-})();
-<?php endforeach; ?>
-</script>
 
 <script>
 // Handle booking approve
