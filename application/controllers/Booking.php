@@ -143,7 +143,7 @@ class Booking extends CI_Controller {
         
         // Create booking
         $booking_data = [
-            'customer_id' => $customer_id,
+            'customer_id' => $customer['id'],  // Use numeric ID, not customer_id string
             'console_id' => $console_id,
             'booking_date' => $booking_date,
             'booking_start_time' => $booking_start_time,

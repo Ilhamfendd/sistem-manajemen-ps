@@ -22,8 +22,8 @@ class Rental_model extends CI_Model {
     public function get_ongoing() {
         $this->db->select('rentals.*, customers.full_name, customers.customer_id, consoles.console_name, consoles.console_type, consoles.price_per_hour');
         $this->db->from($this->table);
-        $this->db->join('customers', 'customers.id = rentals.customer_id');
-        $this->db->join('consoles', 'consoles.id = rentals.console_id');
+        $this->db->join('customers', 'customers.id = rentals.customer_id', 'left');
+        $this->db->join('consoles', 'consoles.id = rentals.console_id', 'left');
         $this->db->where('rentals.status', 'ongoing');
         return $this->db->order_by('rentals.id', 'DESC')->get()->result();
     }
