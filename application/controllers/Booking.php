@@ -368,4 +368,24 @@ class Booking extends CI_Controller {
         $data['title'] = 'Daftar Booking Saya';
         $this->load->view('booking/customer_bookings', $data);
     }
-}
+
+    /**
+     * Generate customer ID via AJAX (for booking new customer)
+     */
+    public function generate_customer_id() {
+        $this->output->set_content_type('application/json');
+        
+        $customer_id = $this->Customer_model->generate_customer_id();
+        
+        if ($customer_id) {
+            echo json_encode([
+                'success' => true,
+                'customer_id' => $customer_id
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Tidak dapat generate ID (mungkin sudah 9999 pelanggan tahun ini)'
+            ]);
+        }
+    }
