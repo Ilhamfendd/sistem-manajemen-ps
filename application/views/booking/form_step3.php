@@ -11,87 +11,130 @@
 
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-7">
+        <div class="col-md-6">
             <div style="text-align: center;">
-                <h3 class="mb-4">Pilih Unit PS</h3>
+                <h3 class="mb-4">Pilih Durasi</h3>
 
-                <?php if (empty($consoles)): ?>
-                    <div class="notification notification-warning notification-flash" style="display: flex;">
-                        <div class="notification-icon"><i class="fas fa-exclamation-triangle"></i></div>
-                        <div class="notification-content">
-                            <p class="notification-message">Semua unit sedang digunakan. Silakan coba lagi nanti.</p>
+                <form id="step3Form" method="POST" action="<?= site_url('booking/store') ?>">
+                    <input type="hidden" name="customer_id" value="<?= $customer_id ?>">
+                    <input type="hidden" name="console_id" value="<?= $console['id'] ?>">
+                    <input type="hidden" name="booking_date" value="<?= date('Y-m-d') ?>">
+                    <input type="hidden" name="booking_start_time" value="<?= date('H:i') ?>">
+
+                    <div class="card bg-light mb-4" style="border: none;">
+                        <div class="card-body p-3">
+                            <div class="row mb-2">
+                                <div class="col-6"><small class="text-muted">Unit:</small></div>
+                                <div class="col-6"><strong><?= $console['console_name'] ?></strong></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6"><small class="text-muted">Harga/Jam:</small></div>
+                                <div class="col-6"><strong>Rp <?= number_format($console['price_per_hour'], 0, ',', '.') ?></strong></div>
+                            </div>
                         </div>
                     </div>
-                <?php else: ?>
-                    <form id="step3Form" method="POST" action="<?= site_url('booking/form_step4') ?>">
-                        <input type="hidden" name="phone" value="<?= $phone ?>">
-                        <input type="hidden" name="full_name" value="<?= $full_name ?>">
-                        
-                        <div class="row">
-                            <?php foreach ($consoles as $console): ?>
-                                <div class="col-md-6 mb-3">
-                                    <div class="card console-card" style="cursor: pointer; border: 3px solid #ddd; transition: all 0.3s ease;">
-                                        <div class="card-body p-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input console-radio" type="radio" 
-                                                       name="console_id" value="<?= $console['id'] ?>" 
-                                                       id="console_<?= $console['id'] ?>" required>
-                                                <label class="form-check-label w-100" for="console_<?= $console['id'] ?>" style="cursor: pointer;">
-                                                    <h6 class="mb-2"><?= $console['console_name'] ?></h6>
-                                                    <small class="text-muted"><?= $console['console_type'] ?></small>
-                                                    <div class="mt-2">
-                                                        <strong class="text-primary">Rp <?= number_format($console['price_per_hour'], 0, ',', '.') ?>/jam</strong>
-                                                    </div>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
 
-                        <div id="error" class="alert alert-danger d-none mt-3" role="alert"></div>
-
-                        <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-arrow-right"></i> Lanjut
-                            </button>
-                            <a href="<?= site_url('booking') ?>" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left"></i> Kembali
-                            </a>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Durasi <span class="text-danger">*</span></label>
+                        <div class="input-group input-group-lg">
+                            <input type="number" class="form-control" id="duration_hours" 
+                                   name="duration_hours" min="0.5" step="0.5" value="1" required>
+                            <span class="input-group-text">jam</span>
                         </div>
-                    </form>
-                <?php endif; ?>
+                    </div>
+
+                    <div class="notification notification-info notification-flash" style="display: flex;">
+                        <div class="notification-icon"><i class="fas fa-info-circle"></i></div>
+                        <div class="notification-content">
+                            <p class="notification-message mb-1">Total: <span id="calculation">1 jam × Rp <?= number_format($console['price_per_hour'], 0, ',', '.') ?></span></p>
+                            <p class="notification-message" style="font-size: 1.1rem; font-weight: 600;">Rp <span id="totalPrice"><?= number_format($console['price_per_hour'], 0, ',', '.') ?></span></p>
+                        </div>
+                    </div>
+
+                    <div id="error" class="alert alert-danger d-none" role="alert"></div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-check-circle"></i> Konfirmasi
+                        </button>
+                        <a href="<?= site_url('booking') ?>" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Kembali
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-// Highlight selected console
-document.querySelectorAll('.console-radio').forEach(radio => {
-    radio.addEventListener('change', function() {
-        document.querySelectorAll('.console-card').forEach(card => {
-            card.style.borderColor = 'transparent';
-        });
-        this.closest('.col-md-6').querySelector('.console-card').style.borderColor = '#0d6efd';
-    });
-});
+const pricePerHour = <?= $console['price_per_hour'] ?>;
+
+function updatePrice() {
+    const duration = parseFloat(document.getElementById('duration_hours').value) || 1;
+    const total = pricePerHour * duration;
+    
+    const formattedPrice = pricePerHour.toLocaleString('id-ID');
+    const formattedTotal = total.toLocaleString('id-ID');
+    
+    document.getElementById('calculation').textContent = 
+        duration + ' jam × Rp ' + formattedPrice;
+    document.getElementById('totalPrice').textContent = formattedTotal;
+}
+
+document.getElementById('duration_hours').addEventListener('change', updatePrice);
+document.getElementById('duration_hours').addEventListener('input', updatePrice);
 
 document.getElementById('step3Form').addEventListener('submit', function(e) {
     e.preventDefault();
     
-    const selected = document.querySelector('input[name="console_id"]:checked');
+    const duration = parseFloat(document.getElementById('duration_hours').value);
+    const consoleId = document.querySelector('input[name="console_id"]').value;
+    const customerId = document.querySelector('input[name="customer_id"]').value;
     const errorDiv = document.getElementById('error');
     
-    if (!selected) {
-        errorDiv.textContent = 'Silakan pilih salah satu unit';
+    if (!duration || duration <= 0) {
+        errorDiv.textContent = 'Silakan masukkan durasi dengan benar';
+        errorDiv.classList.remove('d-none');
+        return;
+    }
+    
+    if (duration < 0.5) {
+        errorDiv.textContent = 'Durasi minimal 0.5 jam';
+        errorDiv.classList.remove('d-none');
+        return;
+    }
+    
+    // Validate all required fields
+    if (!consoleId || !customerId) {
+        errorDiv.textContent = 'Data tidak lengkap';
         errorDiv.classList.remove('d-none');
         return;
     }
     
     errorDiv.classList.add('d-none');
-    this.submit();
+    
+    // Submit via AJAX untuk catch JSON response
+    const formData = new FormData(this);
+    fetch('<?= site_url('booking/store') ?>', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            // Redirect ke status page
+            window.location.href = '<?= site_url('booking/booking_status') ?>/' + data.booking_id;
+        } else {
+            errorDiv.textContent = data.message;
+            errorDiv.classList.remove('d-none');
+        }
+    })
+    .catch(e => {
+        console.error(e);
+        errorDiv.textContent = 'Terjadi kesalahan. Silakan coba lagi.';
+        errorDiv.classList.remove('d-none');
+    });
 });
 </script>
 

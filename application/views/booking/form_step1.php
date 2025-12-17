@@ -154,7 +154,7 @@ continueBtn.addEventListener('click', function() {
     
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = '<?= site_url('booking/form_step3') ?>';
+    form.action = '<?= site_url('booking/form_step2') ?>';
     
     const input = document.createElement('input');
     input.type = 'hidden';
@@ -214,7 +214,7 @@ continueNewBtn.addEventListener('click', function() {
         return;
     }
     
-    // Save new customer and continue to step 3 (pilih unit)
+    // Save new customer and continue to step 2 (pilih unit)
     continueNewBtn.disabled = true;
     continueNewBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
     
@@ -227,10 +227,10 @@ continueNewBtn.addEventListener('click', function() {
     .then(r => r.json())
     .then(data => {
         if (data.success) {
-            // Go to step 3 directly
+            // Go to step 2 directly
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '<?= site_url('booking/form_step3') ?>';
+            form.action = '<?= site_url('booking/form_step2') ?>';
             
             const idInput = document.createElement('input');
             idInput.type = 'hidden';

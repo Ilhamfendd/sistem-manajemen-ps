@@ -44,17 +44,8 @@ class Booking extends CI_Controller {
     }
 
     public function form_step2() {
-        // Step 2: Input Nama (hanya untuk customer baru)
-        $phone = $this->input->post('phone');
-        $data['phone'] = $phone;
-        $data['title'] = 'Pesan Unit PS - Step 2';
-        $this->load->view('booking/form_step2', $data);
-    }
-
-    public function form_step3() {
-        // Step 3: Pilih Unit PS
-        $phone = $this->input->post('phone');
-        $full_name = $this->input->post('full_name');
+        // Step 2: Pilih Unit PS
+        $customer_id = $this->input->post('customer_id');
         
         // Clean up expired bookings first - restore console status if booking expired
         $this->db->where('status', 'pending');
@@ -74,29 +65,25 @@ class Booking extends CI_Controller {
         // Get only available consoles (exclude di_pesan and maintenance)
         $this->db->where('status', 'available');
         $data['consoles'] = $this->db->get('consoles')->result_array();
-        $data['phone'] = $phone;
-        $data['full_name'] = $full_name;
-        $data['title'] = 'Pesan Unit PS - Step 3';
-        $this->load->view('booking/form_step3', $data);
+        $data['customer_id'] = $customer_id;
+        $data['title'] = 'Pesan Unit PS - Step 2';
+        $this->load->view('booking/form_step2', $data);
     }
 
-    public function form_step4() {
-        // Step 4: Pilih Durasi & Konfirmasi
-        $phone = $this->input->post('phone');
-        $full_name = $this->input->post('full_name');
+    public function form_step3() {
+        // Step 3: Pilih Durasi
+        $customer_id = $this->input->post('customer_id');
         $console_id = $this->input->post('console_id');
         
-        if (!$console_id) {
-            redirect('booking');
-        }
+        if (!$console_id) show_404();
         
-        $console = $this->db->where('id', $console_id)->get('consoles')->row_array();
+        $console = $this->db->get_where('consoles', ['id' => $console_id])->row_array();
+        if (!$console) show_404();
         
-        $data['phone'] = $phone;
-        $data['full_name'] = $full_name;
         $data['console'] = $console;
-        $data['title'] = 'Pesan Unit PS - Step 4';
-        $this->load->view('booking/form_step4', $data);
+        $data['customer_id'] = $customer_id;
+        $data['title'] = 'Pesan Unit PS - Step 3';
+        $this->load->view('booking/form_step3', $data);
     }
 
     public function store() {
