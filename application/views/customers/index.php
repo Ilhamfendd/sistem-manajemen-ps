@@ -22,7 +22,7 @@
                     <tr>
                         <th>#</th>
                         <th>Nama Lengkap</th>
-                        <th>No. Telepon</th>
+                        <th>ID Pelanggan</th>
                         <th>Catatan</th>
                         <th>Aksi</th>
                     </tr>
@@ -32,7 +32,7 @@
                     <tr>
                         <td><strong><?= $i+1 ?></strong></td>
                         <td><?= $c->full_name ?></td>
-                        <td><?= $c->phone ?></td>
+                        <td><strong><?= $c->customer_id ?></strong></td>
                         <td><?= $c->note ?></td>
                         <td>
                             <div class="btn-group btn-group-sm" role="group">
