@@ -62,7 +62,7 @@
                     <tr>
                         <th>#</th>
                         <th>Pelanggan</th>
-                        <th>No HP</th>
+                        <th>ID Pelanggan</th>
                         <th>Unit PS</th>
                         <th>Durasi</th>
                         <th>Total</th>
@@ -74,7 +74,7 @@
                     <tr>
                         <td><strong>#<?= $b['id'] ?></strong></td>
                         <td><?= $b['full_name'] ?></td>
-                        <td><?= $b['phone'] ?></td>
+                        <td><?= $b['customer_id'] ?></td>
                         <td><?= $b['console_name'] ?> (<?= $b['console_type'] ?>)</td>
                         <td><?= $b['duration_hours'] ?> jam</td>
                         <td><strong>Rp <?= number_format($b['estimated_cost']) ?></strong></td>
@@ -115,7 +115,7 @@
                     <tr>
                         <th>#</th>
                         <th>Pelanggan</th>
-                        <th>No HP</th>
+                        <th>ID Pelanggan</th>
                         <th>Unit PS</th>
                         <th>Durasi</th>
                         <th>Total</th>
@@ -128,7 +128,7 @@
                     <tr class="table-info">
                         <td><strong>#<?= $b['id'] ?></strong></td>
                         <td><?= $b['full_name'] ?></td>
-                        <td><?= $b['phone'] ?></td>
+                        <td><?= $b['customer_id'] ?></td>
                         <td><?= $b['console_name'] ?> (<?= $b['console_type'] ?>)</td>
                         <td><?= $b['duration_hours'] ?> jam</td>
                         <td><strong>Rp <?= number_format($b['estimated_cost']) ?></strong></td>
