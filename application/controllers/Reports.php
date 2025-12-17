@@ -183,7 +183,7 @@ class Reports extends MY_Controller {
                  ->order_by('total_amount', 'DESC');
         $data['payment_methods'] = $this->db->get()->result_array();
 
-        $this->db->select('customers.full_name as customer_name, customers.phone as customer_phone, rentals.payment_status as status, COUNT(rentals.id) as rental_count, SUM(rentals.total_amount) as total_amount, COALESCE(SUM(transactions.amount), 0) as paid_amount, (SUM(rentals.total_amount) - COALESCE(SUM(transactions.amount), 0)) as sisa_piutang')
+        $this->db->select('customers.full_name as customer_name, customers.customer_id as customer_id, rentals.payment_status as status, COUNT(rentals.id) as rental_count, SUM(rentals.total_amount) as total_amount, COALESCE(SUM(transactions.amount), 0) as paid_amount, (SUM(rentals.total_amount) - COALESCE(SUM(transactions.amount), 0)) as sisa_piutang')
                  ->from('rentals')
                  ->join('customers', 'customers.id = rentals.customer_id', 'left')
                  ->join('transactions', 'transactions.rental_id = rentals.id', 'left')
@@ -209,7 +209,7 @@ class Reports extends MY_Controller {
         $data['start_date'] = $start_date;
         $data['end_date'] = $end_date;
 
-        $this->db->select('customers.id, customers.full_name as customer_name, customers.phone as customer_phone, COUNT(rentals.id) as rental_count, SUM(rentals.duration_minutes) as total_minutes, SUM(rentals.total_amount) as total_spending, AVG(rentals.total_amount) as avg_spending')
+        $this->db->select('customers.id, customers.full_name as customer_name, customers.customer_id, COUNT(rentals.id) as rental_count, SUM(rentals.duration_minutes) as total_minutes, SUM(rentals.total_amount) as total_spending, AVG(rentals.total_amount) as avg_spending')
                  ->from('rentals')
                  ->join('customers', 'customers.id = rentals.customer_id', 'left')
                  ->where('rentals.status', 'finished')
@@ -302,7 +302,7 @@ class Reports extends MY_Controller {
         $start_date = $this->input->get('start_date') ?: date('Y-m-01');
         $end_date = $this->input->get('end_date') ?: date('Y-m-d');
 
-        $this->db->select('customers.full_name, customers.phone, COUNT(rentals.id) as rental_count, SUM(rentals.total_amount) as total_spending, AVG(rentals.total_amount) as avg_spending')
+        $this->db->select('customers.full_name, customers.customer_id, COUNT(rentals.id) as rental_count, SUM(rentals.total_amount) as total_spending, AVG(rentals.total_amount) as avg_spending')
                  ->from('rentals')
                  ->join('customers', 'customers.id = rentals.customer_id')
                  ->where('rentals.status', 'finished')

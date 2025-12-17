@@ -9,7 +9,7 @@ class Rental_model extends CI_Model {
      * Get all rentals with customer and console info
      */
     public function get_all() {
-        $this->db->select('rentals.*, customers.full_name, customers.phone, consoles.console_name, consoles.console_type, consoles.price_per_hour');
+        $this->db->select('rentals.*, customers.full_name, customers.customer_id, consoles.console_name, consoles.console_type, consoles.price_per_hour');
         $this->db->from($this->table);
         $this->db->join('customers', 'customers.id = rentals.customer_id');
         $this->db->join('consoles', 'consoles.id = rentals.console_id');
@@ -20,7 +20,7 @@ class Rental_model extends CI_Model {
      * Get ongoing rentals only
      */
     public function get_ongoing() {
-        $this->db->select('rentals.*, customers.full_name, customers.phone, consoles.console_name, consoles.console_type, consoles.price_per_hour');
+        $this->db->select('rentals.*, customers.full_name, customers.customer_id, consoles.console_name, consoles.console_type, consoles.price_per_hour');
         $this->db->from($this->table);
         $this->db->join('customers', 'customers.id = rentals.customer_id');
         $this->db->join('consoles', 'consoles.id = rentals.console_id');
@@ -32,7 +32,7 @@ class Rental_model extends CI_Model {
      * Get finished rentals with transaction info
      */
     public function get_finished() {
-        $this->db->select('rentals.*, customers.full_name, customers.phone, consoles.console_name, consoles.console_type, consoles.price_per_hour');
+        $this->db->select('rentals.*, customers.full_name, customers.customer_id, consoles.console_name, consoles.console_type, consoles.price_per_hour');
         $this->db->from($this->table);
         $this->db->join('customers', 'customers.id = rentals.customer_id', 'left');
         $this->db->join('consoles', 'consoles.id = rentals.console_id', 'left');
@@ -56,7 +56,7 @@ class Rental_model extends CI_Model {
      * Find single rental
      */
     public function find($id) {
-        $this->db->select('rentals.*, customers.full_name, customers.phone, consoles.console_name, consoles.console_type, consoles.price_per_hour');
+        $this->db->select('rentals.*, customers.full_name, customers.customer_id, consoles.console_name, consoles.console_type, consoles.price_per_hour');
         $this->db->from($this->table);
         $this->db->join('customers', 'customers.id = rentals.customer_id', 'left');
         $this->db->join('consoles', 'consoles.id = rentals.console_id', 'left');
@@ -91,7 +91,7 @@ class Rental_model extends CI_Model {
      * Get rental with transaction details
      */
     public function get_with_transactions($id) {
-        $this->db->select('rentals.*, customers.full_name, customers.phone, consoles.console_name, consoles.console_type, consoles.price_per_hour');
+        $this->db->select('rentals.*, customers.full_name, customers.customer_id, consoles.console_name, consoles.console_type, consoles.price_per_hour');
         $this->db->from($this->table);
         $this->db->join('customers', 'customers.id = rentals.customer_id', 'left');
         $this->db->join('consoles', 'consoles.id = rentals.console_id', 'left');

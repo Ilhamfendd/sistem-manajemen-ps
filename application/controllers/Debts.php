@@ -16,7 +16,7 @@ class Debts extends MY_Controller {
      */
     public function index() {
         // Get all finished rentals with payment status partial or pending
-        $this->db->select('rentals.id, rentals.customer_id, rentals.console_id, rentals.total_amount, rentals.status, rentals.payment_status, rentals.end_time, customers.full_name, customers.phone, consoles.console_name');
+        $this->db->select('rentals.id, rentals.customer_id, rentals.console_id, rentals.total_amount, rentals.status, rentals.payment_status, rentals.end_time, customers.full_name, customers.customer_id, consoles.console_name');
         $this->db->from('rentals');
         $this->db->join('customers', 'customers.id = rentals.customer_id', 'left');
         $this->db->join('consoles', 'consoles.id = rentals.console_id', 'left');
@@ -49,7 +49,6 @@ class Debts extends MY_Controller {
                 $customers_debt[$debt->customer_id] = [
                     'customer_id' => $debt->customer_id,
                     'customer_name' => $debt->full_name,
-                    'phone' => $debt->phone,
                     'total_outstanding' => 0,
                     'rentals' => []
                 ];
@@ -70,7 +69,7 @@ class Debts extends MY_Controller {
      */
     public function customer_detail($customer_id) {
         // Get all customer's outstanding rentals
-        $this->db->select('rentals.id, rentals.customer_id, rentals.console_id, rentals.total_amount, rentals.status, rentals.payment_status, rentals.end_time, customers.full_name, customers.phone, consoles.console_name');
+        $this->db->select('rentals.id, rentals.customer_id, rentals.console_id, rentals.total_amount, rentals.status, rentals.payment_status, rentals.end_time, customers.full_name, customers.customer_id, consoles.console_name');
         $this->db->from('rentals');
         $this->db->join('customers', 'customers.id = rentals.customer_id', 'left');
         $this->db->join('consoles', 'consoles.id = rentals.console_id', 'left');

@@ -20,7 +20,7 @@
                                 <option value="">-- Pilih Pelanggan --</option>
                                 <?php foreach ($customers as $c): ?>
                                     <option value="<?= $c->id ?>">
-                                        <?= $c->full_name ?> (<?= $c->phone ?>)
+                                        <?= $c->full_name ?> (<?= $c->customer_id ?>)
                                     </option>
                                 <?php endforeach; ?>
                             </select>

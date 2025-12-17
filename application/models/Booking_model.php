@@ -30,8 +30,9 @@ class Booking_model extends CI_Model {
      * Get all pending bookings (for kasir dashboard)
      */
     public function get_pending() {
-        return $this->db->select('b.*, c.console_name, c.console_type, c.price_per_hour')
+        return $this->db->select('b.*, cust.full_name, cust.customer_id, c.console_name, c.console_type, c.price_per_hour')
                         ->from('bookings b')
+                        ->join('customers cust', 'cust.id = b.customer_id', 'left')
                         ->join('consoles c', 'c.id = b.console_id', 'left')
                         ->where('b.status', 'pending')
                         ->where('b.expires_at > ', date('Y-m-d H:i:s'))
@@ -44,8 +45,9 @@ class Booking_model extends CI_Model {
      * Get all approved bookings (for today/upcoming)
      */
     public function get_approved() {
-        return $this->db->select('b.*, c.console_name, c.console_type, c.price_per_hour')
+        return $this->db->select('b.*, cust.full_name, cust.customer_id, c.console_name, c.console_type, c.price_per_hour')
                         ->from('bookings b')
+                        ->join('customers cust', 'cust.id = b.customer_id', 'left')
                         ->join('consoles c', 'c.id = b.console_id', 'left')
                         ->where('b.status', 'approved')
                         ->where('b.booking_date >=', date('Y-m-d'))

@@ -5,7 +5,7 @@
         <div>
             <h2><i class="fas fa-file-invoice-dollar"></i> <?= $title ?></h2>
             <p class="text-muted mb-0">
-                <i class="fas fa-phone"></i> <?= $customer->phone ?>
+                <i class="fas fa-id-card"></i> ID: <?= $customer->customer_id ?>
             </p>
         </div>
         <a href="<?= site_url('debts') ?>" class="btn btn-outline-secondary">

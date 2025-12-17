@@ -108,7 +108,7 @@
                                         <strong><?= $payment['customer_name'] ?></strong>
                                     </td>
                                     <td>
-                                        <small><?= $payment['customer_phone'] ?? '-' ?></small>
+                                        <small>ID: <?= $payment['customer_id'] ?? '-' ?></small>
                                     </td>
                                     <td class="text-end"><?= $payment['rental_count'] ?></td>
                                     <td class="text-end">

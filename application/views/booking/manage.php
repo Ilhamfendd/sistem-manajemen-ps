@@ -57,7 +57,7 @@
                         <tr class="booking-row-<?= $booking['id'] ?>" id="booking-<?= $booking['id'] ?>">
                             <td><strong>#<?= $booking['id'] ?></strong></td>
                             <td><?= $booking['full_name'] ?></td>
-                            <td><?= $booking['phone'] ?></td>
+                            <td><?= $booking['customer_id'] ?></td>
                             <td>
                                 <span class="badge bg-info"><?= $booking['console_type'] ?? 'N/A' ?></span>
                                 <?= $booking['console_name'] ?? '(Not found)' ?>
@@ -128,7 +128,7 @@
                         <tr class="approved-row-<?= $booking['id'] ?>" id="approved-<?= $booking['id'] ?>">
                             <td><strong>#<?= $booking['id'] ?></strong></td>
                             <td><?= $booking['full_name'] ?></td>
-                            <td><?= $booking['phone'] ?></td>
+                            <td><?= $booking['customer_id'] ?></td>
                             <td>
                                 <span class="badge bg-info"><?= $booking['console_type'] ?? 'N/A' ?></span>
                                 <?= $booking['console_name'] ?? '(Not found)' ?>

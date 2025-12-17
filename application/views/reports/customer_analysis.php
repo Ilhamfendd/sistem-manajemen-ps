@@ -110,7 +110,7 @@
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                        <small class="text-muted"><?= $customer['customer_phone'] ?? '-' ?></small>
+                                        <small class="text-muted">ID: <?= $customer['customer_id'] ?? '-' ?></small>
                                     </td>
                                     <td class="text-end"><?= $customer['rental_count'] ?></td>
                                     <td class="text-end"><?= number_format($customer['total_minutes']) ?> mnt</td>
