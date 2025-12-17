@@ -75,7 +75,7 @@
                         <td>
                             <strong><?= $c['customer_name'] ?></strong>
                         </td>
-                        <td><?= $c['phone'] ?></td>
+                        <td><?= $c['customer_id'] ?></td>
                         <td>
                             <span class="badge bg-info"><?= count($c['rentals']) ?> transaksi</span>
                         </td>
