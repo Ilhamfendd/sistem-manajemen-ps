@@ -257,13 +257,9 @@ class Rentals extends MY_Controller {
 
         // Update payment status - Awal bayar selalu dianggap "paid" untuk estimasi
         // Nanti saat selesai, akan di-adjust jika ada pembayaran tambahan
-        // Also auto-start timer saat pembayaran awal tercatat
-        $this->Rental_model->update($id, [
-            'payment_status' => 'paid',
-            'timer_started_at' => date('Y-m-d H:i:s')
-        ]);
+        $this->Rental_model->update($id, ['payment_status' => 'paid']);
 
-        $this->session->set_flashdata('success', 'Pembayaran awal Rp ' . number_format($amount, 0, ',', '.') . ' berhasil dicatat. Timer dimulai otomatis!');
+        $this->session->set_flashdata('success', 'Pembayaran awal Rp ' . number_format($amount, 0, ',', '.') . ' berhasil dicatat.');
         redirect('rentals');
     }
 
@@ -677,65 +673,4 @@ class Rentals extends MY_Controller {
         $this->session->set_flashdata('success', 'Timer dimulai untuk penyewaan #' . $id);
         redirect('rentals');
     }
-
-    /**
-     * AJAX endpoint - Force check and auto-finish expired rentals
-     * Called periodically from frontend to ensure rentals auto-complete
-     */
-    public function check_and_finish_expired() {
-        if (!$this->input->is_ajax_request()) {
-            show_404();
-            return;
-        }
-
-        try {
-            $completed = [];
-            
-            // Find all ongoing rentals with timer_started_at and check if duration expired
-            $this->db->select('r.id, r.timer_started_at, r.estimated_hours, r.console_id, r.estimated_cost, c.price_per_hour');
-            $this->db->from('rentals r');
-            $this->db->join('consoles c', 'c.id = r.console_id', 'left');
-            $this->db->where('r.status', 'ongoing');
-            $this->db->where('r.timer_started_at IS NOT NULL', NULL, FALSE);
-            $ongoing_rentals = $this->db->get()->result_array();
-            
-            foreach ($ongoing_rentals as $rental) {
-                // Calculate if duration has expired
-                $timer_start = new DateTime($rental['timer_started_at']);
-                $now = new DateTime();
-                $elapsed_seconds = $now->getTimestamp() - $timer_start->getTimestamp();
-                $estimated_seconds = $rental['estimated_hours'] * 3600;
-                
-                // If elapsed time >= estimated time, auto-complete
-                if ($elapsed_seconds >= $estimated_seconds) {
-                    $duration_minutes = ceil($elapsed_seconds / 60);
-                    $end_time = date('Y-m-d H:i:s');
-                    
-                    // Update rental as finished
-                    $this->db->where('id', $rental['id']);
-                    $this->db->update('rentals', [
-                        'end_time' => $end_time,
-                        'duration_minutes' => $duration_minutes,
-                        'total_amount' => $rental['estimated_cost'],
-                        'status' => 'finished'
-                    ]);
-                    
-                    // Restore console to available
-                    $this->db->where('id', $rental['console_id']);
-                    $this->db->update('consoles', ['status' => 'available']);
-                    
-                    $completed[] = $rental['id'];
-                    log_message('info', "Auto-finished rental via AJAX: ID={$rental['id']}, Duration={$duration_minutes}min");
-                }
-            }
-            
-            echo json_encode([
-                'success' => true,
-                'completed_rentals' => $completed,
-                'count' => count($completed)
-            ]);
-        } catch (Exception $e) {
-            log_message('error', "Error in check_and_finish_expired: " . $e->getMessage());
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-        }
-    }
+}
