@@ -94,7 +94,79 @@
         <?php endif; ?>
     </div>
 
-    <!-- BOOKING APPROVED SECTION -->
+    <script>
+    // Define all booking actions globally so onclick handlers can access them
+    window.approveBooking = function(bookingId) {
+        console.log('Approve button clicked for booking ID:', bookingId);
+        showConfirm('Setuju booking ini?', 'Setujui Booking', () => {
+            console.log('Sending approve request');
+            fetch('<?= site_url('booking/approve') ?>/' + bookingId, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                console.log('Response:', data);
+                if (data.success) {
+                    notify.success(data.message, 'Booking Disetujui');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    notify.error(data.message || 'Gagal', 'Error');
+                }
+            })
+            .catch(e => {
+                console.error('Fetch error:', e);
+                notify.error('Error: ' + e.message, 'Network Error');
+            });
+        });
+    };
+
+    window.rejectBooking = function(bookingId) {
+        console.log('Reject button clicked for booking ID:', bookingId);
+        showConfirm('Tolak booking ini?', 'Tolak Booking', () => {
+            console.log('Sending reject request');
+            fetch('<?= site_url('booking/reject') ?>/' + bookingId, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                console.log('Response:', data);
+                if (data.success) {
+                    notify.success(data.message, 'Booking Ditolak');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    notify.error(data.message || 'Gagal', 'Error');
+                }
+            })
+            .catch(e => {
+                console.error('Fetch error:', e);
+                notify.error('Error: ' + e.message, 'Network Error');
+            });
+        });
+    };
+
+    window.customerArrived = function(bookingId) {
+        console.log('Customer arrived clicked for booking ID:', bookingId);
+        showConfirm('Pelanggan telah tiba? Lanjutkan ke pembayaran?', 'Konfirmasi Kedatangan', () => {
+            fetch('<?= site_url('booking/customer_arrived') ?>/' + bookingId, {
+                method: 'POST'
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    notify.success(data.message, 'Lanjut ke Pembayaran');
+                    setTimeout(() => {
+                        window.location.href = '<?= site_url('rentals/initial_payment') ?>/' + data.rental_id;
+                    }, 1000);
+                } else {
+                    notify.error(data.message, 'Error');
+                }
+            })
+            .catch(e => notify.error('Error: ' + e.message, 'Network Error'));
+        });
+    };
+    </script>
     <div class="mb-5">
         <div class="d-flex align-items-center mb-3">
             <h4 class="mb-0"><i class="fas fa-check text-info"></i> Booking Disetujui - Tunggu Pelanggan</h4>
