@@ -187,10 +187,15 @@ generateBtn.addEventListener('click', function() {
     fetch('<?= site_url('booking/generate_customer_id') ?>')
         .then(r => r.json())
         .then(data => {
+            console.log('Generate ID response:', data);
             if (data.success) {
                 newCustomerId.value = data.customer_id;
                 continueNewBtn.disabled = false;
-                showNotification('ID berhasil di-generate: ' + data.customer_id, 'success');
+                console.log('ID generated:', data.customer_id);
+                // Show success message
+                if (typeof showNotification !== 'undefined') {
+                    showNotification('ID berhasil di-generate: ' + data.customer_id, 'success');
+                }
             } else {
                 newError.textContent = data.message || 'Gagal generate ID';
                 newError.classList.remove('d-none');
@@ -199,8 +204,8 @@ generateBtn.addEventListener('click', function() {
             generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate';
         })
         .catch(err => {
-            console.error(err);
-            newError.textContent = 'Terjadi kesalahan';
+            console.error('Generate ID error:', err);
+            newError.textContent = 'Terjadi kesalahan: ' + err.message;
             newError.classList.remove('d-none');
             generateBtn.disabled = false;
             generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate';
