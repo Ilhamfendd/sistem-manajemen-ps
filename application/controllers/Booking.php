@@ -388,4 +388,4 @@ class Booking extends CI_Controller {
                 'message' => 'Tidak dapat generate ID (mungkin sudah 9999 pelanggan tahun ini)'
             ]);
         }
-    }
+    }}
