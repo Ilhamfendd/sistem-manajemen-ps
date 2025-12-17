@@ -402,15 +402,23 @@
 <script>
 // Handle booking approve
 function approveBooking(bookingId) {
+    console.log('Approve button clicked for booking ID:', bookingId);
+    console.log('showConfirm function exists:', typeof showConfirm);
+    
     showConfirm('Setuju booking ini?', 'Setujui Booking', () => {
+        console.log('Confirm clicked, sending approve request');
         fetch('<?= site_url('booking/approve') ?>/' + bookingId, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             }
         })
-        .then(r => r.json())
+        .then(r => {
+            console.log('Response status:', r.status);
+            return r.json();
+        })
         .then(data => {
+            console.log('Response data:', data);
             if (data.success) {
                 notify.success(data.message, 'Booking Disetujui');
                 setTimeout(() => location.reload(), 1000);
@@ -419,7 +427,7 @@ function approveBooking(bookingId) {
             }
         })
         .catch(e => {
-            console.error('Error:', e);
+            console.error('Fetch error:', e);
             notify.error('Error: ' + e, 'Kesalahan Jaringan');
         });
     });
@@ -427,15 +435,22 @@ function approveBooking(bookingId) {
 
 // Handle booking reject
 function rejectBooking(bookingId) {
+    console.log('Reject button clicked for booking ID:', bookingId);
+    
     showConfirm('Tolak booking ini?', 'Tolak Booking', () => {
+        console.log('Confirm clicked, sending reject request');
         fetch('<?= site_url('booking/reject') ?>/' + bookingId, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             }
         })
-        .then(r => r.json())
+        .then(r => {
+            console.log('Response status:', r.status);
+            return r.json();
+        })
         .then(data => {
+            console.log('Response data:', data);
             if (data.success) {
                 notify.success(data.message, 'Booking Ditolak');
                 setTimeout(() => location.reload(), 1000);
@@ -444,7 +459,7 @@ function rejectBooking(bookingId) {
             }
         })
         .catch(e => {
-            console.error('Error:', e);
+            console.error('Fetch error:', e);
             notify.error('Error: ' + e, 'Kesalahan Jaringan');
         });
     });
