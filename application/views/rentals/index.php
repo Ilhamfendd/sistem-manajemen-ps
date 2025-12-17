@@ -447,6 +447,21 @@ function updateApprovedTimers() {
 // Update timers setiap detik
 setInterval(updateApprovedTimers, 1000);
 updateApprovedTimers(); // Initial update
-</script>
 
-<?php $this->load->view('layouts/footer'); ?>
+// Periodic check untuk auto-finish expired rentals (setiap 30 detik)
+setInterval(() => {
+    fetch('<?= site_url('rentals/check_and_finish_expired') ?>', {
+        method: 'POST'
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success && data.count > 0) {
+            console.log('Auto-finished ' + data.count + ' rental(s)');
+            // Refresh halaman jika ada yang selesai
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        }
+    })
+    .catch(e => console.error('Auto-finish check error:', e));
+}, 30000); // Check every 30 seconds
