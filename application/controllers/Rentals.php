@@ -726,4 +726,4 @@ class Rentals extends MY_Controller {
             log_message('error', "Error in check_expired_and_finish: " . $e->getMessage());
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
-    }
+    }}
