@@ -36,7 +36,7 @@ class Customer_model extends CI_Model {
         
         // Get last customer_id with current year prefix
         $this->db->select('customer_id')
-                 ->like('customer_id', $prefix, 'after')
+                 ->where('customer_id LIKE', $prefix . '%')
                  ->order_by('customer_id', 'DESC')
                  ->limit(1);
         $last_customer = $this->db->get($this->table)->row();
