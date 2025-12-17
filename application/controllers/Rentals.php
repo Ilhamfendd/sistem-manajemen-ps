@@ -36,7 +36,9 @@ class Rentals extends MY_Controller {
         $data['pending_bookings'] = $this->db->get()->result_array();
 
         // Get approved bookings
-        $this->db->select('b.id, cu.customer_id, b.console_id, b.duration_hours, b.estimated_cost, b.approved_at, cu.full_name, c.console_name, c.console_type, c.price_per_hour, b.expires_at');
+        $this->db->select('b.id, b.customer_id, b.console_id, b.duration_hours, b.estimated_cost, b.approved_at, b.expires_at, 
+                          COALESCE(cu.full_name, b.full_name) as full_name, 
+                          cu.customer_id, c.console_name, c.console_type, c.price_per_hour');
         $this->db->from('bookings b');
         $this->db->join('customers cu', 'cu.id = b.customer_id', 'left');
         $this->db->join('consoles c', 'c.id = b.console_id', 'left');
