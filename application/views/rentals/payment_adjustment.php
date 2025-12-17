@@ -84,6 +84,19 @@
                             <p class="h3 text-success">Rp <?php echo number_format($rental['total_amount'], 0, ',', '.'); ?></p>
                         </div>
 
+                        <!-- QR Code Customer ID -->
+                        <div class="card bg-light border-0 mb-4 p-3">
+                            <div class="text-center">
+                                <h6 class="text-muted mb-2">ID Pelanggan</h6>
+                                <h4 class="text-primary mb-3"><strong><?= $rental['customer_id'] ?></strong></h4>
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<?= urlencode($rental['customer_id']) ?>" 
+                                     alt="QR Code Customer ID" class="img-fluid" style="max-width: 150px;">
+                                <p class="text-muted mt-2 mb-0" style="font-size: 0.85rem;">
+                                    Simpan QR code untuk booking berikutnya
+                                </p>
+                            </div>
+                        </div>
+
                         <div class="d-grid gap-2">
                             <a href="<?php echo base_url('rentals'); ?>" class="btn btn-primary">
                                 <i class="fas fa-arrow-left"></i> Kembali ke Daftar Penyewaan

@@ -73,6 +73,21 @@
                     </div>
                     <?php endif; ?>
 
+                    <!-- QR Code Section -->
+                    <div class="row mb-4 pb-4 border-bottom">
+                        <div class="col-12">
+                            <h6 class="text-muted mb-3">ID Pelanggan Anda</h6>
+                            <div class="text-center">
+                                <h3 class="mb-3 text-primary"><strong><?= $booking['customer_id'] ?></strong></h3>
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=<?= urlencode($booking['customer_id']) ?>" 
+                                     alt="QR Code Customer ID" class="img-fluid" style="max-width: 200px;">
+                                <p class="text-muted mt-2 mb-0" style="font-size: 0.9rem;">
+                                    Simpan atau scan QR code ini untuk proses booking berikutnya
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Detail Booking -->
                     <div class="row mb-4">
                         <div class="col-md-6">
