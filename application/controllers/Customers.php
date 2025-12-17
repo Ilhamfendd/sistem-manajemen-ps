@@ -106,4 +106,4 @@ class Customers extends MY_Controller {
 
         $data['title'] = 'ID Pelanggan - ' . $data['customer']->full_name;
         $this->load->view('customers/show_qr', $data);
-    }
+    }}
