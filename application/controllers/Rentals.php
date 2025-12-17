@@ -44,10 +44,17 @@ class Rentals extends MY_Controller {
         $this->db->order_by('b.approved_at', 'DESC');
         $approved_bookings = $this->db->get()->result_array();
         
+        // Debug log
+        log_message('info', "=== APPROVED BOOKINGS DEBUG ===");
+        log_message('info', "Total approved bookings: " . count($approved_bookings));
+        
         // Fix missing expires_at (set ke 15 menit dari approved_at jika NULL)
         foreach ($approved_bookings as &$booking) {
+            log_message('info', "Booking ID " . $booking['id'] . ": expires_at=" . ($booking['expires_at'] ?? 'NULL') . ", approved_at=" . $booking['approved_at']);
+            
             if (empty($booking['expires_at']) && !empty($booking['approved_at'])) {
                 $booking['expires_at'] = date('Y-m-d H:i:s', strtotime($booking['approved_at'] . ' +15 minutes'));
+                log_message('info', "  -> Auto-set expires_at to: " . $booking['expires_at']);
             }
         }
         

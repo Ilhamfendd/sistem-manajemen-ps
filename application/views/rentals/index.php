@@ -205,7 +205,7 @@
                         <td><?= $b['duration_hours'] ?> jam</td>
                         <td><strong>Rp <?= number_format($b['estimated_cost']) ?></strong></td>
                         <td>
-                            <div class="timer" id="timer_<?= $b['id'] ?>" data-expires="<?= $b['expires_at'] ?>">
+                            <div class="timer" id="timer_<?= $b['id'] ?>" data-expires="<?= $b['expires_at'] ?>" title="expires_at: <?= $b['expires_at'] ?>">
                                 <small class="text-danger fw-bold">--:--</small>
                             </div>
                         </td>

@@ -43,4 +43,24 @@ class Api extends CI_Controller {
             'total' => $count
         ]);
     }
+
+    /**
+     * Debug endpoint - check approved bookings and expires_at
+     */
+    public function debug_approved_bookings() {
+        $this->db->select('b.id, b.full_name, b.status, b.approved_at, b.expires_at');
+        $this->db->from('bookings b');
+        $this->db->where('b.status', 'approved');
+        $this->db->order_by('b.approved_at', 'DESC');
+        $bookings = $this->db->get()->result_array();
+        
+        $debug = [
+            'server_time' => date('Y-m-d H:i:s'),
+            'server_timestamp' => time(),
+            'total_approved_bookings' => count($bookings),
+            'bookings' => $bookings
+        ];
+        
+        echo json_encode($debug, JSON_PRETTY_PRINT);
+    }
 }
