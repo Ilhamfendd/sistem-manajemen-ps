@@ -64,8 +64,8 @@
                         <p class="mb-0"><strong><?= $rental['full_name'] ?></strong></p>
                     </div>
                     <div class="mb-3">
-                        <small class="text-muted">Nomor Telepon</small>
-                        <p class="mb-0"><strong><?= $rental['phone'] ?></strong></p>
+                        <small class="text-muted">ID Pelanggan</small>
+                        <p class="mb-0"><strong><?= $rental['customer_id'] ?></strong></p>
                     </div>
                     <div class="mb-3">
                         <small class="text-muted">Unit PlayStation</small>

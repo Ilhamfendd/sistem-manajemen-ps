@@ -334,16 +334,16 @@ class Booking extends CI_Controller {
         $this->load->view('booking/status', $data);
     }
 
-    public function customer_bookings($phone) {
+    public function customer_bookings($customer_id) {
         // Get all bookings for this customer
         $this->db->select('b.*, c.console_name, c.console_type, c.price_per_hour');
         $this->db->from('bookings b');
         $this->db->join('consoles c', 'c.id = b.console_id', 'left');
-        $this->db->where('b.phone', $phone);
+        $this->db->where('b.customer_id', $customer_id);
         $this->db->order_by('b.created_at', 'DESC');
         $data['bookings'] = $this->db->get()->result_array();
         
-        $data['phone'] = $phone;
+        $data['customer_id'] = $customer_id;
         $data['title'] = 'Daftar Booking Saya';
         $this->load->view('booking/customer_bookings', $data);
     }
