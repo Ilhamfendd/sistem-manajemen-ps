@@ -237,7 +237,7 @@
                             <th>#</th>
                             <th>Pelanggan</th>
                             <th>Unit PS</th>
-                            <th>Durasi</th>
+                            <th>Jam Pemainan</th>
                             <th>Total Biaya</th>
                             <th>Status Pembayaran</th>
                             <th>Aksi</th>
