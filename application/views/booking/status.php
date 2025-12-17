@@ -109,42 +109,54 @@
 
 <?php if($booking['status'] == 'approved' && $remaining_time !== null): ?>
 <script>
-// Calibrate server time dengan client time
-const serverTime = new Date('<?= date('Y-m-d H:i:s') ?>').getTime();
-const clientTimeAtLoad = new Date().getTime();
-const timeOffset = serverTime - clientTimeAtLoad;
-
-function getServerTime() {
-    return new Date().getTime() + timeOffset;
-}
-
-// Calculate remaining time dari expires_at
-const expiresAt = new Date('<?= $booking["expires_at"] ?>').getTime();
-
-function updateCountdown() {
-    const now = getServerTime();
-    const remaining = Math.floor((expiresAt - now) / 1000);
+// Unified timer logic - synchronized with kasir view
+document.addEventListener('DOMContentLoaded', function() {
+    // Calibrate server time dengan client time
+    const serverTimeStr = '<?= date('Y-m-d H:i:s') ?>';
+    const serverTime = new Date(serverTimeStr).getTime();
+    const clientTimeAtLoad = new Date().getTime();
+    const timeOffset = serverTime - clientTimeAtLoad;
     
-    const minutes = Math.floor(remaining / 60);
-    const seconds = remaining % 60;
+    console.log('Server time:', serverTimeStr, 'Offset:', timeOffset);
     
-    document.getElementById('minutes').textContent = String(Math.max(0, minutes)).padStart(2, '0');
-    document.getElementById('seconds').textContent = String(Math.max(0, seconds)).padStart(2, '0');
-    
-    if (remaining <= 0) {
-        document.getElementById('countdown').innerHTML = '<span class="text-danger">⏰ WAKTU HABIS!</span>';
-        clearInterval(countdownInterval);
-        return;
+    function getServerTime() {
+        return new Date().getTime() + timeOffset;
     }
-}
-
-updateCountdown();
-const countdownInterval = setInterval(updateCountdown, 1000);
-
-// Auto-refresh page setiap 5 detik untuk cek status terbaru
-setInterval(() => {
-    location.reload();
-}, 5000);
+    
+    // Get expires_at dari booking (UTC format)
+    const expiresAt = new Date('<?= $booking["expires_at"] ?>').getTime();
+    console.log('Expires at:', '<?= $booking["expires_at"] ?>', 'Time:', expiresAt);
+    
+    function updateCountdown() {
+        const now = getServerTime();
+        const remaining = Math.floor((expiresAt - now) / 1000);
+        
+        const minutes = Math.max(0, Math.floor(remaining / 60));
+        const seconds = Math.max(0, remaining % 60);
+        
+        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+        document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        
+        console.log('Countdown update - Remaining:', remaining, 'Minutes:', minutes, 'Seconds:', seconds);
+        
+        if (remaining <= 0) {
+            document.getElementById('countdown').innerHTML = '<span class="text-danger">⏰ WAKTU HABIS!</span>';
+            clearInterval(countdownInterval);
+            // Auto refresh halaman
+            setTimeout(() => location.reload(), 2000);
+            return;
+        }
+    }
+    
+    updateCountdown();
+    const countdownInterval = setInterval(updateCountdown, 1000);
+    
+    // Auto-refresh page setiap 10 detik untuk cek status terbaru
+    setInterval(() => {
+        console.log('Auto-refreshing customer booking status page');
+        location.reload();
+    }, 10000);
+});
 </script>
 <?php endif; ?>
 

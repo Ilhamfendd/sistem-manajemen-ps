@@ -559,39 +559,54 @@ function customerArrived(bookingId) {
 }
 
 
-// Timer countdown untuk approved bookings
+// Timer countdown untuk approved bookings - SYNCHRONIZED DENGAN CUSTOMER VIEW
 // First, calibrate client time dengan server time
-const serverTime = new Date('<?= date('Y-m-d H:i:s') ?>').getTime();
-const clientTimeAtLoad = new Date().getTime();
-const timeOffset = serverTime - clientTimeAtLoad;
-
-function getServerTime() {
-    return new Date().getTime() + timeOffset;
-}
-
-function updateApprovedTimers() {
-    const now = getServerTime();
-    document.querySelectorAll('.timer').forEach(timerEl => {
-        const expiresAt = timerEl.dataset.expires;
-        const expireTime = new Date(expiresAt).getTime();
-        const remaining = expireTime - now;
+document.addEventListener('DOMContentLoaded', function() {
+    const serverTimeStr = '<?= date('Y-m-d H:i:s') ?>';
+    const serverTime = new Date(serverTimeStr).getTime();
+    const clientTimeAtLoad = new Date().getTime();
+    const timeOffset = serverTime - clientTimeAtLoad;
+    
+    console.log('[Kasir Timer] Server time:', serverTimeStr, 'Offset:', timeOffset);
+    
+    window.getServerTime = function() {
+        return new Date().getTime() + timeOffset;
+    };
+    
+    window.updateApprovedTimers = function() {
+        const now = window.getServerTime();
+        let activeTimers = 0;
         
-        if (remaining <= 0) {
-            timerEl.innerHTML = '<small class="text-danger fw-bold">Waktu Habis</small>';
-            return;
+        document.querySelectorAll('.timer').forEach(timerEl => {
+            const expiresAt = timerEl.dataset.expires;
+            if (!expiresAt) return;
+            
+            const expireTime = new Date(expiresAt).getTime();
+            const remaining = Math.floor((expireTime - now) / 1000);
+            
+            activeTimers++;
+            
+            if (remaining <= 0) {
+                timerEl.innerHTML = '<small class="text-danger fw-bold">Waktu Habis</small>';
+                return;
+            }
+            
+            const minutes = Math.max(0, Math.floor(remaining / 60));
+            const seconds = Math.max(0, remaining % 60);
+            const timeStr = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+            
+            timerEl.innerHTML = '<small class="text-danger fw-bold">' + timeStr + '</small>';
+        });
+        
+        if (activeTimers > 0) {
+            console.log('[Kasir Timer] Updated', activeTimers, 'timers');
         }
-        
-        const minutes = Math.floor((remaining / (1000 * 60)) % 60);
-        const seconds = Math.floor((remaining / 1000) % 60);
-        const timeStr = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
-        
-        timerEl.innerHTML = '<small class="text-danger fw-bold">' + timeStr + '</small>';
-    });
-}
-
-// Update timers setiap detik
-setInterval(updateApprovedTimers, 1000);
-updateApprovedTimers(); // Initial update
+    };
+    
+    // Update timers setiap detik
+    setInterval(window.updateApprovedTimers, 1000);
+    window.updateApprovedTimers(); // Initial update
+});
 
 // Periodic check untuk auto-finish expired rentals (setiap 20 detik)
 setInterval(() => {
