@@ -67,4 +67,4 @@ class Customer_model extends CI_Model {
     public function is_customer_id_unique($customer_id) {
         $exists = $this->db->get_where($this->table, ['customer_id' => $customer_id])->num_rows();
         return $exists === 0;
-    }
+    }}
