@@ -578,28 +578,47 @@ document.addEventListener('DOMContentLoaded', function() {
         let activeTimers = 0;
         
         document.querySelectorAll('.timer').forEach(timerEl => {
-            const expiresAt = timerEl.dataset.expires;
-            if (!expiresAt) return;
+            const expiresAtStr = timerEl.dataset.expires;
             
-            const expireTime = new Date(expiresAt).getTime();
-            const remaining = Math.floor((expireTime - now) / 1000);
-            
-            activeTimers++;
-            
-            if (remaining <= 0) {
-                timerEl.innerHTML = '<small class="text-danger fw-bold">Waktu Habis</small>';
+            // Validasi expires_at ada dan tidak kosong
+            if (!expiresAtStr || expiresAtStr.trim() === '' || expiresAtStr === '0000-00-00 00:00:00') {
+                timerEl.innerHTML = '<small class="text-warning fw-bold">Waiting...</small>';
+                console.log('[Kasir Timer] Timer ' + timerEl.id + ' has no expires_at');
                 return;
             }
             
-            const minutes = Math.max(0, Math.floor(remaining / 60));
-            const seconds = Math.max(0, remaining % 60);
-            const timeStr = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
-            
-            timerEl.innerHTML = '<small class="text-danger fw-bold">' + timeStr + '</small>';
+            try {
+                // Parse datetime - support format: "2025-12-17 17:00:00"
+                const expireTime = new Date(expiresAtStr.replace(' ', 'T')).getTime();
+                
+                // Validasi parsing berhasil
+                if (isNaN(expireTime)) {
+                    console.error('[Kasir Timer] Invalid date format:', expiresAtStr);
+                    timerEl.innerHTML = '<small class="text-danger fw-bold">Invalid</small>';
+                    return;
+                }
+                
+                const remaining = Math.floor((expireTime - now) / 1000);
+                activeTimers++;
+                
+                if (remaining <= 0) {
+                    timerEl.innerHTML = '<small class="text-danger fw-bold">Waktu Habis</small>';
+                    return;
+                }
+                
+                const minutes = Math.max(0, Math.floor(remaining / 60));
+                const seconds = Math.max(0, remaining % 60);
+                const timeStr = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+                
+                timerEl.innerHTML = '<small class="text-danger fw-bold">' + timeStr + '</small>';
+            } catch (e) {
+                console.error('[Kasir Timer] Error parsing date:', e, 'Value:', expiresAtStr);
+                timerEl.innerHTML = '<small class="text-danger fw-bold">Error</small>';
+            }
         });
         
         if (activeTimers > 0) {
-            console.log('[Kasir Timer] Updated', activeTimers, 'timers');
+            console.log('[Kasir Timer] Updated', activeTimers, 'timers, now:', new Date(now).toLocaleString());
         }
     };
     
