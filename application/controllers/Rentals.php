@@ -206,14 +206,14 @@ class Rentals extends MY_Controller {
         }
 
         // Get rental with customer and console info
-        $customer = $this->Customer_model->find($rental->customer_id);
+        // Note: Customer info already joined in Rental_model->find()
         $console = $this->Console_model->find($rental->console_id);
 
         $data['title'] = 'Pembayaran Awal - Penyewaan #' . $id;
         $data['rental'] = [
             'id' => $rental->id,
             'customer_id' => $rental->customer_id,
-            'customer_name' => $customer->full_name,
+            'customer_name' => $rental->full_name,
             'console_id' => $rental->console_id,
             'console_name' => $console->console_name,
             'estimated_hours' => $rental->estimated_hours,
@@ -334,7 +334,7 @@ class Rentals extends MY_Controller {
         if (!$rental) show_404();
 
         // Get customer and console info
-        $customer = $this->Customer_model->find($rental->customer_id);
+        // Note: Customer info already joined in Rental_model->find()
         $console = $this->Console_model->find($rental->console_id);
 
         // Calculate paid amount
@@ -355,7 +355,7 @@ class Rentals extends MY_Controller {
         $data['rental'] = [
             'id' => $rental->id,
             'customer_id' => $rental->customer_id,
-            'customer_name' => $customer->full_name,
+            'customer_name' => $rental->full_name,
             'console_id' => $rental->console_id,
             'console_name' => $console->console_name,
             'estimated_hours' => $rental->estimated_hours,
@@ -549,14 +549,14 @@ class Rentals extends MY_Controller {
         }
 
         // Get customer and console info
-        $customer = $this->Customer_model->find($rental->customer_id);
+        // Note: Customer info already joined in Rental_model->find()
         $console = $this->Console_model->find($rental->console_id);
 
         $data['title'] = 'Terima Pembayaran - Penyewaan #' . $id;
         $data['rental'] = [
             'id' => $rental->id,
             'customer_id' => $rental->customer_id,
-            'customer_name' => $customer->full_name,
+            'customer_name' => $rental->full_name,
             'console_name' => $console->console_name,
             'total_amount' => $rental->total_amount,
             'paid_amount' => $paid_amount,
