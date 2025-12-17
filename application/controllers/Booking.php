@@ -18,29 +18,27 @@ class Booking extends CI_Controller {
     }
 
     public function search_customer() {
-        $phone = $this->input->post('phone');
+        $this->output->set_content_type('application/json');
+        $customer_id = $this->input->post('customer_id');
         
-        if (!$phone) {
-            echo json_encode(['success' => false, 'message' => 'Nomor HP harus diisi']);
+        if (!$customer_id) {
+            echo json_encode(['success' => false, 'message' => 'ID Pelanggan harus diisi']);
             return;
         }
         
-        $customer = $this->db->where('phone', $phone)->get('customers')->row_array();
+        $customer = $this->db->where('customer_id', $customer_id)->get('customers')->row_array();
         
         if ($customer) {
-            // Customer exists - skip to step 3 (pilih unit)
+            // Customer exists
             echo json_encode([
                 'success' => true,
-                'is_existing' => true,
-                'customer' => $customer,
-                'next_step' => 3
+                'customer' => $customer
             ]);
         } else {
-            // New customer - go to step 2 (input nama)
+            // Customer not found
             echo json_encode([
-                'success' => true,
-                'is_existing' => false,
-                'next_step' => 2
+                'success' => false,
+                'message' => 'ID Pelanggan tidak ditemukan'
             ]);
         }
     }

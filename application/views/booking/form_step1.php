@@ -6,6 +6,7 @@
     <title><?= $title ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?= base_url('public/css/style.css') ?>">
 </head>
 <body style="background-color: #f8f9fa; padding: 40px 20px;">
 
@@ -15,22 +16,64 @@
             <div style="text-align: center;">
                 <h3 class="mb-4">Pesan Unit PS</h3>
                 
-                <div class="mb-4">
-                    <input type="tel" class="form-control form-control-lg" id="phone" 
-                           placeholder="Masukkan nomor HP" autocomplete="off">
-                </div>
+                <!-- Tab: Pelanggan Lama vs Baru -->
+                <ul class="nav nav-tabs mb-4" id="customerTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="existing-tab" data-bs-toggle="tab" data-bs-target="#existing" type="button">Pelanggan Lama</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="new-tab" data-bs-toggle="tab" data-bs-target="#new" type="button">Pelanggan Baru</button>
+                    </li>
+                </ul>
 
-                <button id="searchBtn" class="btn btn-outline-primary btn-lg">
-                    <i class="fas fa-search"></i> Cek No HP Anda
-                </button>
+                <!-- EXISTING CUSTOMER -->
+                <div class="tab-content" id="customerTabContent">
+                    <div class="tab-pane fade show active" id="existing" role="tabpanel">
+                        <div class="mb-4">
+                            <input type="text" class="form-control form-control-lg" id="customerId" 
+                                   placeholder="Masukkan ID Pelanggan (cth: 250001)" autocomplete="off">
+                        </div>
 
-                <div id="error" class="alert alert-danger d-none mt-3" role="alert"></div>
+                        <button id="searchBtn" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="fas fa-search"></i> Cek ID Anda
+                        </button>
 
-                <div id="resultBox" class="d-none mt-4">
-                    <div class="text-center">
-                        <p class="text-muted mb-2">Selamat datang kembali,</p>
-                        <h5 id="customerName" class="mb-4"></h5>
-                        <button id="continueBtn" class="btn btn-primary btn-lg w-100">Lanjut Booking</button>
+                        <div id="error" class="alert alert-danger d-none mt-3" role="alert"></div>
+
+                        <div id="resultBox" class="d-none mt-4">
+                            <div class="text-center">
+                                <p class="text-muted mb-2">Selamat datang kembali,</p>
+                                <h5 id="customerName" class="mb-4"></h5>
+                                <button id="continueBtn" class="btn btn-primary btn-lg w-100">Lanjut Booking</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NEW CUSTOMER -->
+                    <div class="tab-pane fade" id="new" role="tabpanel">
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label text-start d-block">Nama Lengkap</label>
+                            <input type="text" class="form-control form-control-lg" id="fullName" 
+                                   placeholder="Masukkan nama Anda" autocomplete="off">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="newCustomerId" class="form-label text-start d-block">ID Pelanggan</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control form-control-lg" id="newCustomerId" 
+                                       placeholder="Klik Generate untuk auto-create" readonly>
+                                <button class="btn btn-outline-primary" type="button" id="generateBtn">
+                                    <i class="fas fa-magic"></i> Generate
+                                </button>
+                            </div>
+                            <small class="text-muted d-block mt-1">Format: YYNNNN (cth: 250001)</small>
+                        </div>
+
+                        <div id="newError" class="alert alert-danger d-none mt-3" role="alert"></div>
+
+                        <button id="continueNewBtn" class="btn btn-primary btn-lg w-100" disabled>
+                            <i class="fas fa-arrow-right"></i> Lanjut Booking
+                        </button>
                     </div>
                 </div>
 
@@ -41,14 +84,14 @@
     </div>
 </div>
 
-<style>
-#searchBtn {
-    width: 100%;
-}
-</style>
+<?php $this->load->view('layouts/notifications'); ?>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= base_url('public/js/notifications.js') ?>"></script>
 
 <script>
-const phone = document.getElementById('phone');
+// ===== EXISTING CUSTOMER =====
+const customerId = document.getElementById('customerId');
 const searchBtn = document.getElementById('searchBtn');
 const errorDiv = document.getElementById('error');
 const resultBox = document.getElementById('resultBox');
@@ -58,10 +101,10 @@ const continueBtn = document.getElementById('continueBtn');
 let lastSearchResult = null;
 
 searchBtn.addEventListener('click', function() {
-    const phoneValue = phone.value.trim();
+    const idValue = customerId.value.trim();
     
-    if (!phoneValue || phoneValue.length < 10) {
-        errorDiv.textContent = 'Nomor HP tidak valid (minimal 10 digit)';
+    if (!idValue || idValue.length !== 6) {
+        errorDiv.textContent = 'ID Pelanggan harus 6 karakter (format: YYNNNN)';
         errorDiv.classList.remove('d-none');
         resultBox.classList.add('d-none');
         return;
@@ -74,72 +117,128 @@ searchBtn.addEventListener('click', function() {
     fetch('<?= site_url('booking/search_customer') ?>', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: 'phone=' + encodeURIComponent(phoneValue)
+        body: 'customer_id=' + encodeURIComponent(idValue)
     })
     .then(r => r.json())
     .then(data => {
         if (!data.success) {
-            errorDiv.textContent = data.message;
+            errorDiv.textContent = data.message || 'ID Pelanggan tidak ditemukan';
             errorDiv.classList.remove('d-none');
             resultBox.classList.add('d-none');
             searchBtn.disabled = false;
-            searchBtn.innerHTML = '<i class="fas fa-search"></i> Cek No HP Anda';
+            searchBtn.innerHTML = '<i class="fas fa-search"></i> Cek ID Anda';
             return;
         }
         
         lastSearchResult = {
-            phone: phoneValue,
-            is_existing: data.is_existing,
-            customer: data.customer || null
+            type: 'existing',
+            customer: data.customer
         };
         
-        if (data.is_existing) {
-            // Show existing customer welcome
-            customerName.textContent = data.customer.full_name;
-            resultBox.classList.remove('d-none');
-        } else {
-            // New customer - go directly to step 2
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '<?= site_url('booking/form_step2') ?>';
-            form.innerHTML = '<input type="hidden" name="phone" value="' + phoneValue + '">';
-            document.body.appendChild(form);
-            form.submit();
-        }
-        
+        customerName.textContent = data.customer.full_name;
+        resultBox.classList.remove('d-none');
         searchBtn.disabled = false;
-        searchBtn.innerHTML = '<i class="fas fa-search"></i> Cek No HP Anda';
+        searchBtn.innerHTML = '<i class="fas fa-search"></i> Cek ID Anda';
     })
-    .catch(e => {
-        console.error(e);
-        errorDiv.textContent = 'Terjadi kesalahan. Silakan coba lagi.';
+    .catch(err => {
+        console.error(err);
+        errorDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
         errorDiv.classList.remove('d-none');
-        resultBox.classList.add('d-none');
         searchBtn.disabled = false;
-        searchBtn.innerHTML = '<i class="fas fa-search"></i> Cek No HP Anda';
+        searchBtn.innerHTML = '<i class="fas fa-search"></i> Cek ID Anda';
     });
 });
 
 continueBtn.addEventListener('click', function() {
-    if (!lastSearchResult || !lastSearchResult.is_existing) return;
+    if (!lastSearchResult) return;
     
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = '<?= site_url('booking/form_step3') ?>';
-    form.innerHTML = '<input type="hidden" name="phone" value="' + lastSearchResult.phone + '">' +
-                     '<input type="hidden" name="full_name" value="' + lastSearchResult.customer.full_name + '">';
+    
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'customer_id';
+    input.value = lastSearchResult.customer.customer_id;
+    
+    form.appendChild(input);
     document.body.appendChild(form);
     form.submit();
 });
 
-// Enter key to search
-phone.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        searchBtn.click();
+// ===== NEW CUSTOMER =====
+const fullName = document.getElementById('fullName');
+const newCustomerId = document.getElementById('newCustomerId');
+const generateBtn = document.getElementById('generateBtn');
+const newError = document.getElementById('newError');
+const continueNewBtn = document.getElementById('continueNewBtn');
+
+generateBtn.addEventListener('click', function() {
+    if (!fullName.value.trim()) {
+        newError.textContent = 'Silakan masukkan nama terlebih dahulu';
+        newError.classList.remove('d-none');
+        return;
     }
+    
+    newError.classList.add('d-none');
+    generateBtn.disabled = true;
+    generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
+    fetch('<?= site_url('booking/generate_customer_id') ?>')
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                newCustomerId.value = data.customer_id;
+                continueNewBtn.disabled = false;
+                showNotification('ID berhasil di-generate: ' + data.customer_id, 'success');
+            } else {
+                newError.textContent = data.message || 'Gagal generate ID';
+                newError.classList.remove('d-none');
+            }
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate';
+        })
+        .catch(err => {
+            console.error(err);
+            newError.textContent = 'Terjadi kesalahan';
+            newError.classList.remove('d-none');
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate';
+        });
+});
+
+continueNewBtn.addEventListener('click', function() {
+    if (!fullName.value.trim() || !newCustomerId.value.trim()) {
+        newError.textContent = 'Semua data harus diisi';
+        newError.classList.remove('d-none');
+        return;
+    }
+    
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '<?= site_url('booking/form_step2') ?>';
+    
+    const nameInput = document.createElement('input');
+    nameInput.type = 'hidden';
+    nameInput.name = 'full_name';
+    nameInput.value = fullName.value.trim();
+    form.appendChild(nameInput);
+    
+    const idInput = document.createElement('input');
+    idInput.type = 'hidden';
+    idInput.name = 'customer_id';
+    idInput.value = newCustomerId.value.trim();
+    form.appendChild(idInput);
+    
+    document.body.appendChild(form);
+    form.submit();
+});
+
+customerId.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') searchBtn.click();
 });
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
