@@ -105,7 +105,7 @@ $route['rentals/collect_payment/(:num)'] = 'rentals/collect_payment/$1';
 $route['rentals/process_collect_payment/(:num)'] = 'rentals/process_collect_payment/$1';
 
 $route['debts'] = 'debts/index';
-$route['debts/customer_detail/(:num)'] = 'debts/customer_detail/$1';
+$route['debts/customer_detail/(:any)'] = 'debts/customer_detail/$1';
 
 $route['booking'] = 'booking/index';
 $route['booking/search_customer'] = 'booking/search_customer';

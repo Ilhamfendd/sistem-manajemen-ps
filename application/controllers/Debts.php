@@ -67,15 +67,15 @@ class Debts extends MY_Controller {
     /**
      * View customer debt details
      */
-    public function customer_detail($customer_id) {
-        // Get all customer's outstanding rentals
+    public function customer_detail($customer_id_param) {
+        // Get all customer's outstanding rentals using the customer_id string
         $this->db->select('rentals.id, rentals.customer_id, rentals.console_id, rentals.total_amount, rentals.status, rentals.payment_status, rentals.end_time, customers.full_name, customers.customer_id, consoles.console_name');
         $this->db->from('rentals');
         $this->db->join('customers', 'customers.id = rentals.customer_id', 'left');
         $this->db->join('consoles', 'consoles.id = rentals.console_id', 'left');
         $this->db->where('rentals.status', 'finished');
         $this->db->where_in('rentals.payment_status', ['partial', 'pending']);
-        $this->db->where('rentals.customer_id', $customer_id);
+        $this->db->where('customers.customer_id', $customer_id_param);
         $this->db->order_by('rentals.end_time', 'DESC');
         
         $debts_raw = $this->db->get()->result();
@@ -91,7 +91,8 @@ class Debts extends MY_Controller {
         $customer = null;
         foreach ($debts_raw as $debt) {
             if (!$customer) {
-                $customer = $this->Customer_model->find($customer_id);
+                // Get customer by customer_id string
+                $customer = $this->db->get_where('customers', ['customer_id' => $customer_id_param])->row();
             }
 
             $this->db->select('SUM(amount) as total');
