@@ -178,6 +178,8 @@ class Booking extends CI_Controller {
     }
 
     public function approve($booking_id) {
+        $this->output->set_content_type('application/json');
+        
         // Check kasir only
         $user = $this->session->userdata('user');
         if (!$user || $user['role'] != 'kasir') {
@@ -191,16 +193,22 @@ class Booking extends CI_Controller {
             return;
         }
         
+        // Calculate expires_at as 15 minutes from now
+        $expires_at = date('Y-m-d H:i:s', strtotime('+15 minutes'));
+        
         $this->db->where('id', $booking_id);
         $this->db->update('bookings', [
             'status' => 'approved',
-            'approved_at' => date('Y-m-d H:i:s')
+            'approved_at' => date('Y-m-d H:i:s'),
+            'expires_at' => $expires_at
         ]);
         
         echo json_encode(['success' => true, 'message' => 'Booking disetujui']);
     }
 
     public function reject($booking_id) {
+        $this->output->set_content_type('application/json');
+        
         // Check kasir only
         $user = $this->session->userdata('user');
         if (!$user || $user['role'] != 'kasir') {
