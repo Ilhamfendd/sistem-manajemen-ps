@@ -568,7 +568,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const clientTimeAtLoad = new Date().getTime();
     const timeOffset = serverTime - clientTimeAtLoad;
     
-    console.log('[Kasir Timer] Server time:', serverTimeStr, 'Offset:', timeOffset);
+    console.log('[Kasir Timer INIT]');
+    console.log('  Server time string:', serverTimeStr);
+    console.log('  Server time ms:', serverTime);
+    console.log('  Client time ms:', clientTimeAtLoad);
+    console.log('  Time offset:', timeOffset);
     
     window.getServerTime = function() {
         return new Date().getTime() + timeOffset;
@@ -581,29 +585,39 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.timer').forEach(timerEl => {
             const expiresAtStr = timerEl.dataset.expires;
             
+            console.log('[Timer Update] Timer ID:', timerEl.id, 'expires_at:', expiresAtStr);
+            
             // Validasi expires_at ada dan tidak kosong
             if (!expiresAtStr || expiresAtStr.trim() === '' || expiresAtStr === '0000-00-00 00:00:00') {
                 timerEl.innerHTML = '<small class="text-warning fw-bold">Waiting...</small>';
-                console.log('[Kasir Timer] Timer ' + timerEl.id + ' has no expires_at');
+                console.log('  -> No expires_at value');
                 return;
             }
             
             try {
                 // Parse datetime - support format: "2025-12-17 17:00:00"
-                const expireTime = new Date(expiresAtStr.replace(' ', 'T')).getTime();
+                const isoString = expiresAtStr.replace(' ', 'T');
+                console.log('  -> ISO string:', isoString);
+                
+                const expireTime = new Date(isoString).getTime();
+                console.log('  -> Expire time ms:', expireTime);
+                console.log('  -> Now ms:', now);
                 
                 // Validasi parsing berhasil
                 if (isNaN(expireTime)) {
-                    console.error('[Kasir Timer] Invalid date format:', expiresAtStr);
+                    console.error('[Timer] Invalid date format:', expiresAtStr);
                     timerEl.innerHTML = '<small class="text-danger fw-bold">Invalid</small>';
                     return;
                 }
                 
                 const remaining = Math.floor((expireTime - now) / 1000);
+                console.log('  -> Remaining seconds:', remaining);
+                
                 activeTimers++;
                 
                 if (remaining <= 0) {
                     timerEl.innerHTML = '<small class="text-danger fw-bold">Waktu Habis</small>';
+                    console.log('  -> Time expired!');
                     return;
                 }
                 
@@ -612,20 +626,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 const timeStr = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
                 
                 timerEl.innerHTML = '<small class="text-danger fw-bold">' + timeStr + '</small>';
+                console.log('  -> Display time:', timeStr);
             } catch (e) {
-                console.error('[Kasir Timer] Error parsing date:', e, 'Value:', expiresAtStr);
+                console.error('[Timer] Error parsing date:', e, 'Value:', expiresAtStr);
                 timerEl.innerHTML = '<small class="text-danger fw-bold">Error</small>';
             }
         });
         
         if (activeTimers > 0) {
-            console.log('[Kasir Timer] Updated', activeTimers, 'timers, now:', new Date(now).toLocaleString());
+            console.log('[Timer] Updated', activeTimers, 'timers, now:', new Date(now).toLocaleString());
         }
     };
     
     // Update timers setiap detik
     setInterval(window.updateApprovedTimers, 1000);
     window.updateApprovedTimers(); // Initial update
+    
+    console.log('[Kasir Timer] Initialized successfully');
 });
 
 // Periodic check untuk auto-finish expired rentals (setiap 20 detik)
