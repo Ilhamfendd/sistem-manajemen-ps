@@ -258,9 +258,9 @@
                             </td>
                             <td>
                                 <?php 
-                                $hours = floor($r->duration_minutes / 60);
-                                $mins = $r->duration_minutes % 60;
-                                echo $hours . 'j ' . $mins . 'm';
+                                $start_time = date('H:i', strtotime($r->start_time));
+                                $end_time = date('H:i', strtotime($r->end_time));
+                                echo $start_time . ' - ' . $end_time;
                                 ?>
                             </td>
                             <td><strong class="text-success">Rp <?= number_format($r->total_amount) ?></strong></td>
