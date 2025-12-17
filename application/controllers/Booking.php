@@ -180,56 +180,50 @@ class Booking extends CI_Controller {
     public function approve($booking_id) {
         $this->output->set_content_type('application/json');
         
-        // Check kasir only
-        $user = $this->session->userdata('user');
-        if (!$user || $user['role'] != 'kasir') {
-            echo json_encode(['success' => false, 'message' => 'Akses ditolak']);
-            return;
+        try {
+            $booking = $this->db->where('id', $booking_id)->get('bookings')->row_array();
+            if (!$booking) {
+                echo json_encode(['success' => false, 'message' => 'Booking tidak ditemukan']);
+                return;
+            }
+            
+            // Calculate expires_at as 15 minutes from now
+            $expires_at = date('Y-m-d H:i:s', strtotime('+15 minutes'));
+            
+            $this->db->where('id', $booking_id);
+            $this->db->update('bookings', [
+                'status' => 'approved',
+                'approved_at' => date('Y-m-d H:i:s'),
+                'expires_at' => $expires_at
+            ]);
+            
+            echo json_encode(['success' => true, 'message' => 'Booking disetujui']);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
-        
-        $booking = $this->db->where('id', $booking_id)->get('bookings')->row_array();
-        if (!$booking) {
-            echo json_encode(['success' => false, 'message' => 'Booking tidak ditemukan']);
-            return;
-        }
-        
-        // Calculate expires_at as 15 minutes from now
-        $expires_at = date('Y-m-d H:i:s', strtotime('+15 minutes'));
-        
-        $this->db->where('id', $booking_id);
-        $this->db->update('bookings', [
-            'status' => 'approved',
-            'approved_at' => date('Y-m-d H:i:s'),
-            'expires_at' => $expires_at
-        ]);
-        
-        echo json_encode(['success' => true, 'message' => 'Booking disetujui']);
     }
 
     public function reject($booking_id) {
         $this->output->set_content_type('application/json');
         
-        // Check kasir only
-        $user = $this->session->userdata('user');
-        if (!$user || $user['role'] != 'kasir') {
-            echo json_encode(['success' => false, 'message' => 'Akses ditolak']);
-            return;
+        try {
+            $booking = $this->db->where('id', $booking_id)->get('bookings')->row_array();
+            if (!$booking) {
+                echo json_encode(['success' => false, 'message' => 'Booking tidak ditemukan']);
+                return;
+            }
+            
+            $this->db->where('id', $booking_id);
+            $this->db->update('bookings', ['status' => 'rejected']);
+            
+            // Restore console to 'available' when booking is rejected
+            $this->db->where('id', $booking['console_id']);
+            $this->db->update('consoles', ['status' => 'available']);
+            
+            echo json_encode(['success' => true, 'message' => 'Booking ditolak']);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
-        
-        $booking = $this->db->where('id', $booking_id)->get('bookings')->row_array();
-        if (!$booking) {
-            echo json_encode(['success' => false, 'message' => 'Booking tidak ditemukan']);
-            return;
-        }
-        
-        $this->db->where('id', $booking_id);
-        $this->db->update('bookings', ['status' => 'rejected']);
-        
-        // Restore console to 'available' when booking is rejected
-        $this->db->where('id', $booking['console_id']);
-        $this->db->update('consoles', ['status' => 'available']);
-        
-        echo json_encode(['success' => true, 'message' => 'Booking ditolak']);
     }
 
     public function customer_arrived($booking_id) {
